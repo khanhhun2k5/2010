@@ -25,6 +25,12 @@
       "skillPath": "skills/basin/SKILL.md",
       "computedHash": "4b447ec8bd58635536c5630e0ef1223563b013676ffabfc02e8a2e0e5c436b98"
     },
+    "book-study": {
+      "source": "sanyuan0704/code-review-expert",
+      "sourceType": "github",
+      "skillPath": "skills/book-study/SKILL.md",
+      "computedHash": "f02c38de9b640428987156ffd7d219e12beacf222bb633a06de48698ff466be9"
+    },
     "brainstorming": {
       "source": "obra/superpowers",
       "sourceType": "github",
@@ -54,6 +60,12 @@
       "sourceType": "github",
       "skillPath": "skills/cloudflare-one-migrations/SKILL.md",
       "computedHash": "346ccd66789494f81ed9c42f1c1313dd4cf2f7bb79b6aae85001a25c6b649cb7"
+    },
+    "code-review-expert": {
+      "source": "sanyuan0704/code-review-expert",
+      "sourceType": "github",
+      "skillPath": "skills/code-review-expert/SKILL.md",
+      "computedHash": "6c2fe31851a34e63e033257527eab04eea835ca1cf4c4276d1392a323e36e377"
     },
     "create-design-md": {
       "source": "ibelick/ui-skills",
@@ -199,11 +211,29 @@
       "skillPath": "skills/seo-audit/SKILL.md",
       "computedHash": "01f9f8a3feb3ea69c6c212d61189c610f96ef2cc363adc27fd314d78254bf6ae"
     },
+    "sigma": {
+      "source": "sanyuan0704/code-review-expert",
+      "sourceType": "github",
+      "skillPath": "skills/sigma/SKILL.md",
+      "computedHash": "88bcbdec596ed7e19a50ca80282c3b12cfdcf48ae28e3ba275da3193f8a8f057"
+    },
     "skill-creator": {
       "source": "anthropics/skills",
       "sourceType": "github",
       "skillPath": "skills/skill-creator/SKILL.md",
       "computedHash": "5ea13a6d9f0d4bb694405d79acd00cadec0d21bb138c4dd10fcf3c500cb835c2"
+    },
+    "skill-forge": {
+      "source": "sanyuan0704/code-review-expert",
+      "sourceType": "github",
+      "skillPath": "skills/skill-forge/SKILL.md",
+      "computedHash": "63785e2efb35dcee3588e9cd8428aab25b2a8f1e5eb67b380bdbdbeb420e5ecf"
+    },
+    "skill-review": {
+      "source": "sanyuan0704/code-review-expert",
+      "sourceType": "github",
+      "skillPath": "skills/skill-review/SKILL.md",
+      "computedHash": "8d786d13179c6bd1e0b9ff05c3db72768349ab36c43ad431638fd9eef0f21137"
     },
     "sleek-design-mobile-apps": {
       "source": "sleekdotdesign/agent-skills",
@@ -258,6 +288,12 @@
       "sourceType": "github",
       "skillPath": "skills/web-perf/SKILL.md",
       "computedHash": "72d0dd9706147e19bf3c1a36fdc02570f77685541d89d901a3a2f570824ba3cb"
+    },
+    "wiki-ingest": {
+      "source": "sanyuan0704/code-review-expert",
+      "sourceType": "github",
+      "skillPath": "skills/wiki-ingest/SKILL.md",
+      "computedHash": "a9f2611dfbf61bb029d799ffa7d61dd6b96e693e5b086d9b19afb7d7e713faf3"
     },
     "workers-best-practices": {
       "source": "cloudflare/skills",
