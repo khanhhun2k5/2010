@@ -1,0 +1,1324 @@
+{
+ "nodes": [
+  {
+   "id": "hub",
+   "cluster": "route",
+   "kind": "entry",
+   "keywords": "skill hub chon skill nhieu skill ket hop chain which skill nen dung skill nao",
+   "description": "",
+   "installed": true
+  },
+  {
+   "id": "find-skills",
+   "cluster": "route",
+   "kind": "skill",
+   "keywords": "find skill install skill extend capability tim skill cai skill co skill nao",
+   "description": "Helps users discover and install agent skills when they ask questions like \"how do I do X\", \"find a skill for X\", \"is there a skill that can...\", or express interest in extending capabilities. This skill should be used when the user is looking for functionality that might exist as an installable skill.",
+   "installed": true
+  },
+  {
+   "id": "brainstorming",
+   "cluster": "route",
+   "kind": "skill",
+   "keywords": "brainstorm creative feature design before build y tuong yeu cau truoc khi lam them tinh nang",
+   "description": "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation.",
+   "installed": true
+  },
+  {
+   "id": "eda",
+   "cluster": "data",
+   "kind": "skill",
+   "keywords": "dataset csv excel parquet profile explore data kham pha du lieu chat luong du lieu",
+   "description": "",
+   "installed": false
+  },
+  {
+   "id": "stats",
+   "cluster": "data",
+   "kind": "skill",
+   "keywords": "ab test significance p-value sample size causal hypothesis kiem dinh co mau",
+   "description": "",
+   "installed": false
+  },
+  {
+   "id": "p-data",
+   "cluster": "data",
+   "kind": "plugin",
+   "keywords": "sql warehouse query chart dashboard data story viet sql bieu do",
+   "description": "",
+   "installed": false
+  },
+  {
+   "id": "conn",
+   "cluster": "data",
+   "kind": "connector",
+   "keywords": "connector gmail drive slack crm calendar canva ket noi dich vu",
+   "description": "",
+   "installed": false
+  },
+  {
+   "id": "debug",
+   "cluster": "build",
+   "kind": "skill",
+   "keywords": "error traceback failing test wrong numbers odd result bug loi ket qua sai",
+   "description": "",
+   "installed": false
+  },
+  {
+   "id": "agent-browser",
+   "cluster": "web",
+   "kind": "skill",
+   "keywords": "browser automation click form screenshot scrape test web app qa dogfood slack electron trinh duyet tu dong",
+   "description": "Browser automation CLI for AI agents. Use when the user needs to interact with websites, including navigating pages, filling forms, clicking buttons, taking screenshots, extracting data, testing web apps, or automating any browser task. Triggers include requests to \"open a website\", \"fill out a form\", \"click a button\", \"take a screenshot\", \"scrape data from a page\", \"test this web app\", \"login to a site\", \"automate browser actions\", or any task requiring programmatic web interaction. Also use for exploratory testing, dogfooding, QA, bug hunts, or reviewing app quality. Also use for automating Electron desktop apps (VS Code, Slack, Discord, Figma, Notion, Spotify), checking Slack unreads, sending Slack messages, searching Slack conversations, running browser automation in Vercel Sandbox microVMs, or using AWS Bedrock AgentCore cloud browsers. Prefer agent-browser over any built-in browser automation or web tools.",
+   "installed": true
+  },
+  {
+   "id": "p-web",
+   "cluster": "web",
+   "kind": "plugin",
+   "keywords": "scrape pages google results structured extraction brightdata thu thap du lieu web",
+   "description": "",
+   "installed": false
+  },
+  {
+   "id": "seo-audit",
+   "cluster": "web",
+   "kind": "skill",
+   "keywords": "seo audit ranking traffic dropped crawl indexing kiem tra seo",
+   "description": "When the user wants to audit, review, or diagnose SEO issues on their site. Also use when the user mentions \"SEO audit,\" \"technical SEO,\" \"why am I not ranking,\" \"SEO issues,\" \"on-page SEO,\" \"meta tags review,\" \"SEO health check,\" \"my traffic dropped,\" \"lost rankings,\" \"not showing up in Google,\" \"site isn't ranking,\" \"Google update hit me,\" \"page speed,\" \"core web vitals,\" \"crawl errors,\" or \"indexing issues.\" Use this even if the user just says something vague like \"my SEO is bad\" or \"help with SEO\" — start with an audit. For building pages at scale to target keywords, see programmatic-seo. For adding structured data, see schema. For AI search optimization, see ai-seo.",
+   "installed": true
+  },
+  {
+   "id": "p-seo",
+   "cluster": "web",
+   "kind": "plugin",
+   "keywords": "seo content strategy keywords schema markup searchfit chien luoc noi dung",
+   "description": "",
+   "installed": false
+  },
+  {
+   "id": "fixing-metadata",
+   "cluster": "web",
+   "kind": "skill",
+   "keywords": "meta title description canonical open graph twitter card favicon json-ld robots",
+   "description": "Audit and fix HTML metadata including page titles, meta descriptions, canonical URLs, Open Graph tags, Twitter cards, favicons, JSON-LD structured data, and robots directives. Use when adding SEO metadata, fixing social share previews, reviewing Open Graph tags, setting up canonical URLs, or shipping new pages that need correct meta tags.",
+   "installed": true
+  },
+  {
+   "id": "web-perf",
+   "cluster": "web",
+   "kind": "skill",
+   "keywords": "core web vitals lighthouse lcp cls loading speed performance toi uu toc do",
+   "description": "Audit, diagnose, or optimize website loading and interaction performance, Core Web Vitals, and Lighthouse performance scores.",
+   "installed": true
+  },
+  {
+   "id": "cloudflare",
+   "cluster": "cloudflare",
+   "kind": "skill",
+   "keywords": "cloudflare product choose architecture storage networking security chon san pham",
+   "description": "Discover and choose Cloudflare products for apps, APIs, AI agents, storage, networking, and security. Use for architecture and product selection, including when the user describes a need without naming a Cloudflare product; then find the relevant skill or documentation.",
+   "installed": true
+  },
+  {
+   "id": "wrangler",
+   "cluster": "cloudflare",
+   "kind": "skill",
+   "keywords": "wrangler cli deploy preview local dev config worker project",
+   "description": "Run or troubleshoot Wrangler CLI commands and configure Worker projects for local development, Previews, deployment, and Cloudflare resource management.",
+   "installed": true
+  },
+  {
+   "id": "workers-best-practices",
+   "cluster": "cloudflare",
+   "kind": "skill",
+   "keywords": "workers production review config best practice",
+   "description": "Cloudflare Workers best practices for production applications. Use when writing, reviewing, or configuring Workers.",
+   "installed": true
+  },
+  {
+   "id": "durable-objects",
+   "cluster": "cloudflare",
+   "kind": "skill",
+   "keywords": "durable objects persistent state coordination websocket",
+   "description": "Build, debug, or review Cloudflare Durable Objects code for persistent state and coordination.",
+   "installed": true
+  },
+  {
+   "id": "agents-sdk",
+   "cluster": "cloudflare",
+   "kind": "skill",
+   "keywords": "cloudflare agents sdk ai agent stateful",
+   "description": "Build, debug, or review Cloudflare Agents SDK applications using the agents package.",
+   "installed": true
+  },
+  {
+   "id": "k2",
+   "cluster": "cloudflare",
+   "kind": "skill",
+   "keywords": "k2 streams durable log retention subscription produce consume",
+   "description": "Build and troubleshoot Cloudflare K2 or K2 Streams durable logs. Use for stream setup, producing from Workers or HTTP, configuring retention and inputs, and consuming through subscriptions.",
+   "installed": true
+  },
+  {
+   "id": "basin",
+   "cluster": "cloudflare",
+   "kind": "skill",
+   "keywords": "basin pipelines catalog r2 iceberg sql analytics streaming",
+   "description": "Build and troubleshoot Cloudflare Basin analytics workflows with Basin Pipelines, Basin Catalog, and Basin SQL. Use for streaming data into R2 Iceberg tables, managing catalogs, or querying those tables; also use for requests using the former Data Platform, Pipelines, R2 Data Catalog, or R2 SQL names.",
+   "installed": true
+  },
+  {
+   "id": "cloudflare-email-service",
+   "cluster": "cloudflare",
+   "kind": "skill",
+   "keywords": "email sending routing delivery cloudflare",
+   "description": "Implement or troubleshoot Cloudflare Email Sending and Email Routing integrations and their delivery configuration.",
+   "installed": true
+  },
+  {
+   "id": "cloudflare-one",
+   "cluster": "cloudflare",
+   "kind": "skill",
+   "keywords": "zero trust sase gateway access warp tunnel",
+   "description": "Design, configure, troubleshoot, or review Cloudflare One Zero Trust and SASE deployments. Use cloudflare-one-migrations for migration planning from other vendors.",
+   "installed": true
+  },
+  {
+   "id": "cloudflare-one-migrations",
+   "cluster": "cloudflare",
+   "kind": "skill",
+   "keywords": "migrate vpn swg sase policy mapping rollout chuyen doi",
+   "description": "Assess and plan migrations from existing VPN, SWG, or SASE platforms to Cloudflare One, including policy mapping, parity gaps, and rollout.",
+   "installed": true
+  },
+  {
+   "id": "turnstile-spin",
+   "cluster": "cloudflare",
+   "kind": "skill",
+   "keywords": "turnstile bot verification captcha siteverify",
+   "description": "Set up, repair, or migrate to Cloudflare Turnstile bot verification in an existing frontend and backend, including server-side Siteverify.",
+   "installed": true
+  },
+  {
+   "id": "nextjs-on-cloudflare",
+   "cluster": "cloudflare",
+   "kind": "skill",
+   "keywords": "nextjs next.js vinext opennext deploy workers",
+   "description": "Build, migrate, and deploy Next.js apps on Cloudflare Workers with vinext. Use when starting a Next.js project on Cloudflare, moving an existing app to Workers, choosing between vinext and OpenNext, or setting up vinext for Workers. For setup, migration, or deployment, install vinext's upstream skills with `npx skills add cloudflare/vinext` if missing, then read and follow the applicable skill and docs.",
+   "installed": true
+  },
+  {
+   "id": "sandbox-stable",
+   "cluster": "cloudflare",
+   "kind": "skill",
+   "keywords": "cloudflare sandbox stable sdk",
+   "description": "Build or maintain Cloudflare Sandbox apps on the stable @cloudflare/sandbox package. Use sandbox-next for preview apps and sandbox-migrate-to-next for stable-to-preview migrations.",
+   "installed": true
+  },
+  {
+   "id": "sandbox-next",
+   "cluster": "cloudflare",
+   "kind": "skill",
+   "keywords": "cloudflare sandbox next preview sdk 1.0",
+   "description": "Build or maintain Cloudflare Sandbox apps on @cloudflare/sandbox@next (SDK 1.0 preview). Use sandbox-migrate-to-next when porting a stable app.",
+   "installed": true
+  },
+  {
+   "id": "sandbox-migrate-to-next",
+   "cluster": "cloudflare",
+   "kind": "skill",
+   "keywords": "migrate sandbox stable to next preview",
+   "description": "Migrate Cloudflare Sandbox apps from stable @cloudflare/sandbox to @cloudflare/sandbox@next (SDK 1.0 preview). Use sandbox-next for apps already on the preview.",
+   "installed": true
+  },
+  {
+   "id": "redis-core",
+   "cluster": "redis",
+   "kind": "skill",
+   "keywords": "redis data model structure hash json key naming counter leaderboard session cache",
+   "description": "Core Redis modeling guidance — choose the right data structure (String, Hash, List, Set, Sorted Set, JSON, Stream, Vector Set) and use consistent colon-separated key names. Use when designing a Redis data model, caching objects, deciding between Hash and JSON, building counters, leaderboards, membership sets, or session stores, or when reviewing/cleaning up Redis key naming.",
+   "installed": true
+  },
+  {
+   "id": "redis-search",
+   "cluster": "redis",
+   "kind": "skill",
+   "keywords": "redis search ft.create ft.search vector hnsw hybrid rag index",
+   "description": "Redis Search guidance covering FT.CREATE schema design, field type selection (TEXT, TAG, NUMERIC, GEO, GEOSHAPE, VECTOR, JSON path), DIALECT 2 query syntax, FT.SEARCH / FT.AGGREGATE / FT.HYBRID command selection, vector similarity with HNSW or FLAT, hybrid retrieval combining lexical and vector ranking, RAG pipelines, zero-downtime index updates via aliases, and debugging with FT.PROFILE and FT.EXPLAIN. Use when defining a search index on Hash or JSON documents, writing FT.SEARCH queries with filters, sorting, aggregation, or vector KNN, tuning HNSW parameters, building a RAG retrieval pipeline, or troubleshooting slow or empty search results.",
+   "installed": true
+  },
+  {
+   "id": "redis-connections",
+   "cluster": "redis",
+   "kind": "skill",
+   "keywords": "redis client connection pool pipeline timeout scan resp3 client-side caching",
+   "description": "Redis client and connection guidance covering connection pooling, multiplexing, pipelining, client-side caching with RESP3, avoiding slow commands (KEYS, SMEMBERS, HGETALL), and tuning socket timeouts. Use when configuring a Redis client (redis-py, Jedis, Lettuce, NRedisStack), batching commands for throughput, eliminating per-request connection creation, iterating large keyspaces with SCAN, enabling client-side caching for read-heavy workloads, or setting connect and read timeouts.",
+   "installed": true
+  },
+  {
+   "id": "redis-clustering",
+   "cluster": "redis",
+   "kind": "skill",
+   "keywords": "redis cluster crossslot hash tag replica shard",
+   "description": "Redis Cluster and replication guidance covering hash tags for multi-key operations, avoiding CROSSSLOT errors, and reading from replicas to scale read-heavy workloads. Use when designing keys for a sharded Redis Cluster, debugging CROSSSLOT errors on MGET / SDIFF / pipelines, configuring a multi-key transaction in a cluster, or routing reads to replicas for caches, analytics, or dashboards.",
+   "installed": true
+  },
+  {
+   "id": "redis-security",
+   "cluster": "redis",
+   "kind": "skill",
+   "keywords": "redis acl tls auth requirepass hardening firewall",
+   "description": "Redis security guidance covering authentication (requirepass and ACL users), TLS, ACL-based least-privilege access control, restricting network exposure via bind and protected-mode, firewall rules, and disabling dangerous commands. Use when deploying Redis to production, defining ACL users for an application, configuring TLS connections, locking down a Redis instance behind a firewall, or auditing a Redis deployment for security hardening.",
+   "installed": true
+  },
+  {
+   "id": "redis-observability",
+   "cluster": "redis",
+   "kind": "skill",
+   "keywords": "redis monitoring slowlog info metrics alerts incident triage",
+   "description": "Redis observability guidance — which metrics to monitor (memory, connections, hit ratio, ops/sec, rejected connections), which built-in commands to reach for during incident triage (SLOWLOG, INFO, MEMORY DOCTOR, CLIENT LIST, FT.PROFILE), and when to use the Redis Insight GUI. Use when setting up monitoring or alerts for a Redis instance, diagnosing a performance regression, profiling a slow FT.SEARCH query, or wiring Redis metrics into Prometheus, Datadog, or similar.",
+   "installed": true
+  },
+  {
+   "id": "redis-semantic-cache",
+   "cluster": "redis",
+   "kind": "skill",
+   "keywords": "langcache semantic cache llm response similarity threshold cost latency",
+   "description": "Redis LangCache guidance for semantic caching of LLM responses on Redis Cloud — calling search/set via the SDK or REST API, tuning the similarity threshold, separating caches per task type, and filtering with custom attributes. Use when caching LLM completions or RAG answers to cut API cost and latency, building a cache-aside layer in front of OpenAI / Anthropic / etc., tuning hit rate vs precision, or splitting one app's LLM workloads into multiple LangCache caches.",
+   "installed": true
+  },
+  {
+   "id": "iris-development",
+   "cluster": "redis",
+   "kind": "skill",
+   "keywords": "iris agent memory long-term memory session events redis cloud",
+   "description": "Iris is Redis's umbrella for AI-focused products. Use this skill when integrating with the Iris Redis Agent Memory (RAM) data plane on Redis Cloud — recording session events for an AI agent, creating or searching long-term memories, configuring a memory store, or tuning background memory promotion. Code examples use the official `redis-agent-memory` (Python) and `@redis-iris/agent-memory` (TypeScript) SDKs.",
+   "installed": true
+  },
+  {
+   "id": "supabase-postgres-best-practices",
+   "cluster": "postgres",
+   "kind": "skill",
+   "keywords": "postgres sql schema migration rls index slow query pgvector pg_cron supabase explain database",
+   "description": "Postgres best practices maintained by Supabase, for Postgres running anywhere. Load this skill BEFORE writing or changing anything that lives in a Postgres database: creating or altering tables and columns (including choosing column types), schema design, migrations and declarative schema files, RLS policies and the tests that verify them, indexes, triggers, database functions, queues and scheduled jobs (pg_cron, pgmq), vector/semantic search (pgvector), and restoring dumps (pg_restore) or importing data. Also load it when diagnosing slow queries, high CPU, timeouts, EXPLAIN plans, connection exhaustion, locking, bloat, or rows visible to the wrong user or tenant. This is not just a performance guide — schema, migration, security, and SQL authoring tasks need these rules too, even for a one-column change or a single query.",
+   "installed": true
+  },
+  {
+   "id": "frontend-design",
+   "cluster": "ui",
+   "kind": "skill",
+   "keywords": "visual design aesthetic typography distinctive ui giao dien dep thiet ke",
+   "description": "Guidance for distinctive, intentional visual design when building new UI or reshaping an existing one. Helps with aesthetic direction, typography, and making choices that don't read as templated defaults.",
+   "installed": true
+  },
+  {
+   "id": "ui-skills-root",
+   "cluster": "ui",
+   "kind": "skill",
+   "keywords": "select ui skills context ui work",
+   "description": "Use before UI-related work to select the smallest useful UI Skills context through the ui-skills CLI.",
+   "installed": true
+  },
+  {
+   "id": "baseline-ui",
+   "cluster": "ui",
+   "kind": "skill",
+   "keywords": "deslop spacing hierarchy typography layout polish cleanup",
+   "description": "Quickly deslop UI code by fixing spacing, hierarchy, typography, and small layout issues. Use when the interface needs a fast cleanup or polish pass.",
+   "installed": true
+  },
+  {
+   "id": "improve-ui",
+   "cluster": "ui",
+   "kind": "skill",
+   "keywords": "audit ui design evidence drift plan handoff read-only",
+   "description": "Audit an existing product surface against its own design evidence, identify verified UI problems, and write self-contained implementation plans for another agent. Strictly read-only on product source. Use when asked to review, refine, improve, or clean up an interface without replacing its identity; investigate design-system drift; or prepare a design handoff.",
+   "installed": true
+  },
+  {
+   "id": "create-design-md",
+   "cluster": "ui",
+   "kind": "skill",
+   "keywords": "design md design tokens design language visual system document",
+   "description": "Create or update a DESIGN.md from an existing product repository or public website. Use when asked to document an interface's design language, reconstruct its visual system, extract design tokens and guidance from current evidence, or give coding agents persistent UI context. Do not modify product source or promote accidental implementation patterns into design decisions.",
+   "installed": true
+  },
+  {
+   "id": "fixing-accessibility",
+   "cluster": "ui",
+   "kind": "skill",
+   "keywords": "accessibility aria keyboard focus contrast wcag a11y",
+   "description": "Audit and fix HTML accessibility issues including ARIA labels, keyboard navigation, focus management, color contrast, and form errors. Use when adding interactive controls, forms, dialogs, or reviewing WCAG compliance.",
+   "installed": true
+  },
+  {
+   "id": "fixing-motion-performance",
+   "cluster": "ui",
+   "kind": "skill",
+   "keywords": "animation jank layout thrashing compositor scroll motion",
+   "description": "Audit and fix animation performance issues including layout thrashing, compositor properties, scroll-linked motion, and blur effects. Use when animations stutter, transitions jank, or reviewing CSS/JS animation performance.",
+   "installed": true
+  },
+  {
+   "id": "web-design-guidelines",
+   "cluster": "ui",
+   "kind": "skill",
+   "keywords": "review ui web interface guidelines ux audit best practices",
+   "description": "Review UI code for Web Interface Guidelines compliance. Use when asked to \"review my UI\", \"check accessibility\", \"audit design\", \"review UX\", or \"check my site against best practices\".",
+   "installed": true
+  },
+  {
+   "id": "vercel-react-best-practices",
+   "cluster": "ui",
+   "kind": "skill",
+   "keywords": "react next.js performance bundle data fetching rendering",
+   "description": "React and Next.js performance optimization guidelines from Vercel Engineering. This skill should be used when writing, reviewing, or refactoring React/Next.js code to ensure optimal performance patterns. Triggers on tasks involving React components, Next.js pages, data fetching, bundle optimization, or performance improvements.",
+   "installed": true
+  },
+  {
+   "id": "vercel-composition-patterns",
+   "cluster": "ui",
+   "kind": "skill",
+   "keywords": "react composition compound components render props boolean props api",
+   "description": "React composition patterns that scale. Use when refactoring components with boolean prop proliferation, building flexible component libraries, or designing reusable APIs. Triggers on tasks involving compound components, render props, context providers, or component architecture. Includes React 19 API changes.",
+   "installed": true
+  },
+  {
+   "id": "vercel-react-native-skills",
+   "cluster": "mobile",
+   "kind": "skill",
+   "keywords": "react native expo mobile list performance animation native modules",
+   "description": "React Native and Expo best practices for building performant mobile apps. Use when building React Native components, optimizing list performance, implementing animations, or working with native modules. Triggers on tasks involving React Native, Expo, mobile performance, or native platform APIs.",
+   "installed": true
+  },
+  {
+   "id": "sleek-design-mobile-apps",
+   "cluster": "mobile",
+   "kind": "skill",
+   "keywords": "sleek mobile app design screens swiftui html react native",
+   "description": "Use when the user wants to design a mobile app or UI screens, when they mention their Sleek (sleek.design) projects, or when implementing Sleek designs in code (HTML, React Native, SwiftUI).",
+   "installed": true
+  },
+  {
+   "id": "remotion-best-practices",
+   "cluster": "video",
+   "kind": "skill",
+   "keywords": "remotion video react programmatic animation render",
+   "description": "Router for all Remotion skills",
+   "installed": true
+  },
+  {
+   "id": "p-design",
+   "cluster": "ui",
+   "kind": "plugin",
+   "keywords": "design critique design system ux writing accessibility audit research synthesis handoff",
+   "description": "",
+   "installed": false
+  },
+  {
+   "id": "p-figma",
+   "cluster": "ui",
+   "kind": "plugin",
+   "keywords": "figma file design tokens design to code",
+   "description": "",
+   "installed": false
+  },
+  {
+   "id": "code-review-expert",
+   "cluster": "review",
+   "kind": "skill",
+   "keywords": "code review git changes solid security senior engineer review code",
+   "description": "Expert code review of current git changes with a senior engineer lens. Detects SOLID violations, security risks, and proposes actionable improvements.",
+   "installed": true
+  },
+  {
+   "id": "code-review",
+   "cluster": "review",
+   "kind": "skill",
+   "keywords": "review diff pr correctness bugs simplify",
+   "description": "",
+   "installed": false
+  },
+  {
+   "id": "p-eng",
+   "cluster": "review",
+   "kind": "plugin",
+   "keywords": "code review architecture decision incident response standup technical docs su co",
+   "description": "",
+   "installed": false
+  },
+  {
+   "id": "p-term",
+   "cluster": "review",
+   "kind": "plugin",
+   "keywords": "terminal commands processes files on computer chay lenh",
+   "description": "",
+   "installed": false
+  },
+  {
+   "id": "sigma",
+   "cluster": "learn",
+   "kind": "skill",
+   "keywords": "tutor learn teach me study topic socratic mastery hoc giai thich",
+   "description": "Personalized 1-on-1 AI tutor using Bloom's 2-Sigma mastery learning. Guides users through any topic with Socratic questioning, adaptive pacing, and rich visual output (HTML dashboards, Excalidraw concept maps, generated images). Use when user wants to learn something, study a topic, understand a concept, requests tutoring, says 'teach me', 'I want to learn', 'explain X to me step by step', 'help me understand', or invokes /sigma. Triggers on: learn, study, teach, tutor, understand, master, explain step by step.",
+   "installed": true
+  },
+  {
+   "id": "book-study",
+   "cluster": "learn",
+   "kind": "skill",
+   "keywords": "read book chapter ingest quiz spaced repetition reading plan doc sach",
+   "description": "Reading coach: guides users through books systematically with knowledge compilation, mastery testing, spaced repetition, and knowledge querying. Use when user says 'read this book with me', 'book study', 'start studying X', 'reading plan', 'ingest this chapter', 'review what I read', 'quiz me on the book', 'what did the book say about X', or invokes /book-study. Supports sub-commands: ingest, query, review, compare, status. Triggers: book, study, read, chapter, ingest, review, quiz, reading plan, book notes.",
+   "installed": true
+  },
+  {
+   "id": "wiki-ingest",
+   "cluster": "learn",
+   "kind": "skill",
+   "keywords": "wiki knowledge base ingest compile notes",
+   "description": "Compile articles, documents, or notes into a structured wiki knowledge base. Use when user says 'ingest to wiki', 'compile to knowledge base', 'update wiki', 'wiki ingest', 'add this to wiki', or invokes /wiki-ingest. Supports single or batch ingest. Triggers: wiki, ingest, knowledge base, compile, digest, index, catalog.",
+   "installed": true
+  },
+  {
+   "id": "docs",
+   "cluster": "output",
+   "kind": "skill",
+   "keywords": "report memo proposal plan guide notes document viet tai lieu bao cao",
+   "description": "",
+   "installed": true
+  },
+  {
+   "id": "docx",
+   "cluster": "output",
+   "kind": "skill",
+   "keywords": "word docx tracked changes file word",
+   "description": "",
+   "installed": true
+  },
+  {
+   "id": "pdf",
+   "cluster": "output",
+   "kind": "skill",
+   "keywords": "pdf extract merge split fill form ocr watermark file pdf",
+   "description": "Use this skill whenever the user wants to do anything with PDF files. This includes reading or extracting text/tables from PDFs, combining or merging multiple PDFs into one, splitting PDFs apart, rotating pages, adding watermarks, creating new PDFs, filling PDF forms, encrypting/decrypting PDFs, extracting images, and OCR on scanned PDFs to make them searchable. If the user mentions a .pdf file or asks to produce one, use this skill.",
+   "installed": true
+  },
+  {
+   "id": "pptx",
+   "cluster": "output",
+   "kind": "skill",
+   "keywords": "powerpoint pptx slides deck trinh chieu",
+   "description": "",
+   "installed": true
+  },
+  {
+   "id": "xlsx",
+   "cluster": "output",
+   "kind": "skill",
+   "keywords": "spreadsheet xlsx csv excel bang tinh",
+   "description": "",
+   "installed": true
+  },
+  {
+   "id": "google-workspace",
+   "cluster": "output",
+   "kind": "skill",
+   "keywords": "google doc sheet slides drive workspace",
+   "description": "",
+   "installed": true
+  },
+  {
+   "id": "deliver",
+   "cluster": "route",
+   "kind": "switch",
+   "keywords": "write present convert deliverable file xuat file",
+   "description": "",
+   "installed": true
+  },
+  {
+   "id": "source",
+   "cluster": "route",
+   "kind": "switch",
+   "keywords": "where data comes from upload paste connector query scraped",
+   "description": "",
+   "installed": true
+  },
+  {
+   "id": "skill-creator",
+   "cluster": "meta",
+   "kind": "skill",
+   "keywords": "create improve test skill evals benchmark tao skill",
+   "description": "Create new skills, modify and improve existing skills, and measure skill performance. Use when users want to create a skill from scratch, edit, or optimize an existing skill, run evals to test a skill, benchmark skill performance with variance analysis, or optimize a skill's description for better triggering accuracy.",
+   "installed": true
+  },
+  {
+   "id": "skill-forge",
+   "cluster": "meta",
+   "kind": "skill",
+   "keywords": "create skill architecture workflow packaging skill.md",
+   "description": "Create high-quality, production-grade skills for Claude Code. Expert guidance on skill architecture, workflow design, prompt engineering, and packaging. Use when user wants to create a new skill, build a skill, design a skill, write a skill, update an existing skill, improve a skill, refactor a skill, debug a skill, or package a skill. Triggers: 'create skill', 'build skill', 'new skill', 'skill creation', 'write a skill', 'make a skill', 'design a skill', 'improve skill', 'package skill', 'skill development', 'skill template', 'skill best practices', 'write SKILL.md'.",
+   "installed": true
+  },
+  {
+   "id": "skill-review",
+   "cluster": "meta",
+   "kind": "skill",
+   "keywords": "review audit lint skill quality anti-patterns",
+   "description": "Quality review and audit for Claude Code skills. Analyzes skill structure, description quality, workflow design, token efficiency, and anti-patterns against best practices. Use when user wants to review a skill, audit a skill, check skill quality, evaluate a skill, critique a skill, lint a skill, or validate a skill. Triggers: 'review skill', 'audit skill', 'skill quality', 'check my skill', 'evaluate skill', 'skill lint', 'validate skill', 'skill review', 'is this skill good', 'improve this skill'.",
+   "installed": true
+  },
+  {
+   "id": "session-start-hook",
+   "cluster": "meta",
+   "kind": "skill",
+   "keywords": "session start hook cloud sessions setup repo tests linters",
+   "description": "",
+   "installed": true
+  },
+  {
+   "id": "import-memory",
+   "cluster": "meta",
+   "kind": "skill",
+   "keywords": "import memory other assistant",
+   "description": "",
+   "installed": true
+  },
+  {
+   "id": "morning",
+   "cluster": "meta",
+   "kind": "skill",
+   "keywords": "morning brief ban tin buoi sang",
+   "description": "",
+   "installed": true
+  }
+ ],
+ "edges": [
+  {
+   "from": "hub",
+   "to": "brainstorming",
+   "type": "entry",
+   "cond": "creative or build work with unclear requirements"
+  },
+  {
+   "from": "hub",
+   "to": "find-skills",
+   "type": "entry",
+   "cond": "no node fits; look for an installable skill"
+  },
+  {
+   "from": "hub",
+   "to": "source",
+   "type": "entry",
+   "cond": "task starts from data"
+  },
+  {
+   "from": "hub",
+   "to": "deliver",
+   "type": "entry",
+   "cond": "task is only to write or convert"
+  },
+  {
+   "from": "hub",
+   "to": "debug",
+   "type": "entry",
+   "cond": "error or wrong result"
+  },
+  {
+   "from": "hub",
+   "to": "stats",
+   "type": "entry",
+   "cond": "hypothesis or A/B test"
+  },
+  {
+   "from": "hub",
+   "to": "p-data",
+   "type": "entry",
+   "cond": "SQL, charts, dashboards"
+  },
+  {
+   "from": "hub",
+   "to": "cloudflare",
+   "type": "entry",
+   "cond": "Cloudflare product or Workers task"
+  },
+  {
+   "from": "hub",
+   "to": "redis-core",
+   "type": "entry",
+   "cond": "Redis task"
+  },
+  {
+   "from": "hub",
+   "to": "supabase-postgres-best-practices",
+   "type": "entry",
+   "cond": "Postgres or Supabase task"
+  },
+  {
+   "from": "hub",
+   "to": "ui-skills-root",
+   "type": "entry",
+   "cond": "UI cleanup, audit or review"
+  },
+  {
+   "from": "hub",
+   "to": "frontend-design",
+   "type": "entry",
+   "cond": "build new UI"
+  },
+  {
+   "from": "hub",
+   "to": "vercel-react-native-skills",
+   "type": "entry",
+   "cond": "mobile app"
+  },
+  {
+   "from": "hub",
+   "to": "agent-browser",
+   "type": "entry",
+   "cond": "drive or test a website"
+  },
+  {
+   "from": "hub",
+   "to": "seo-audit",
+   "type": "entry",
+   "cond": "SEO problem"
+  },
+  {
+   "from": "hub",
+   "to": "code-review-expert",
+   "type": "entry",
+   "cond": "review changes"
+  },
+  {
+   "from": "hub",
+   "to": "sigma",
+   "type": "entry",
+   "cond": "learn a topic"
+  },
+  {
+   "from": "hub",
+   "to": "book-study",
+   "type": "entry",
+   "cond": "study a book"
+  },
+  {
+   "from": "hub",
+   "to": "skill-forge",
+   "type": "entry",
+   "cond": "create or improve a skill"
+  },
+  {
+   "from": "hub",
+   "to": "session-start-hook",
+   "type": "entry",
+   "cond": "set up a repo for cloud sessions"
+  },
+  {
+   "from": "hub",
+   "to": "p-eng",
+   "type": "entry",
+   "cond": "architecture, incidents"
+  },
+  {
+   "from": "hub",
+   "to": "p-design",
+   "type": "entry",
+   "cond": "design critique"
+  },
+  {
+   "from": "hub",
+   "to": "p-figma",
+   "type": "entry",
+   "cond": "Figma file"
+  },
+  {
+   "from": "hub",
+   "to": "p-web",
+   "type": "entry",
+   "cond": "scraping"
+  },
+  {
+   "from": "hub",
+   "to": "p-term",
+   "type": "entry",
+   "cond": "local files and commands"
+  },
+  {
+   "from": "hub",
+   "to": "remotion-best-practices",
+   "type": "entry",
+   "cond": "programmatic video"
+  },
+  {
+   "from": "p-web",
+   "to": "source",
+   "type": "feeds",
+   "cond": "collect external data"
+  },
+  {
+   "from": "conn",
+   "to": "source",
+   "type": "feeds",
+   "cond": "rows from a connector"
+  },
+  {
+   "from": "p-term",
+   "to": "source",
+   "type": "feeds",
+   "cond": "local files"
+  },
+  {
+   "from": "source",
+   "to": "eda",
+   "type": "feeds",
+   "cond": "dataset not yet profiled"
+  },
+  {
+   "from": "p-data",
+   "to": "eda",
+   "type": "feeds",
+   "cond": "SQL results to profile"
+  },
+  {
+   "from": "eda",
+   "to": "stats",
+   "type": "feeds",
+   "cond": "testable question"
+  },
+  {
+   "from": "eda",
+   "to": "deliver",
+   "type": "report",
+   "cond": "write findings"
+  },
+  {
+   "from": "stats",
+   "to": "deliver",
+   "type": "report",
+   "cond": "write results"
+  },
+  {
+   "from": "p-data",
+   "to": "deliver",
+   "type": "report",
+   "cond": "written summary"
+  },
+  {
+   "from": "any",
+   "to": "debug",
+   "type": "on-error",
+   "cond": "anything fails or looks wrong"
+  },
+  {
+   "from": "debug",
+   "to": "p-eng",
+   "type": "alt",
+   "cond": "production incident: p-eng; code or data bug: debug"
+  },
+  {
+   "from": "deliver",
+   "to": "docs",
+   "type": "route",
+   "cond": "default"
+  },
+  {
+   "from": "deliver",
+   "to": "docx",
+   "type": "route",
+   "cond": "Word named"
+  },
+  {
+   "from": "deliver",
+   "to": "pdf",
+   "type": "route",
+   "cond": "PDF named"
+  },
+  {
+   "from": "deliver",
+   "to": "pptx",
+   "type": "route",
+   "cond": "PowerPoint named"
+  },
+  {
+   "from": "deliver",
+   "to": "xlsx",
+   "type": "route",
+   "cond": "spreadsheet deliverable"
+  },
+  {
+   "from": "deliver",
+   "to": "google-workspace",
+   "type": "route",
+   "cond": "Google file named"
+  },
+  {
+   "from": "code-review-expert",
+   "to": "deliver",
+   "type": "report",
+   "cond": "write review"
+  },
+  {
+   "from": "p-eng",
+   "to": "deliver",
+   "type": "report",
+   "cond": "docs, ADRs, postmortems"
+  },
+  {
+   "from": "code-review-expert",
+   "to": "code-review",
+   "type": "alt",
+   "cond": "either reviews a diff; expert = SOLID/security lens"
+  },
+  {
+   "from": "brainstorming",
+   "to": "frontend-design",
+   "type": "feeds",
+   "cond": "UI idea settled, now design it"
+  },
+  {
+   "from": "brainstorming",
+   "to": "skill-forge",
+   "type": "feeds",
+   "cond": "skill idea settled, now build it"
+  },
+  {
+   "from": "cloudflare",
+   "to": "wrangler",
+   "type": "route",
+   "cond": "deploy, config"
+  },
+  {
+   "from": "cloudflare",
+   "to": "workers-best-practices",
+   "type": "route",
+   "cond": "writing Workers"
+  },
+  {
+   "from": "cloudflare",
+   "to": "durable-objects",
+   "type": "route",
+   "cond": "state, coordination"
+  },
+  {
+   "from": "cloudflare",
+   "to": "agents-sdk",
+   "type": "route",
+   "cond": "AI agents"
+  },
+  {
+   "from": "cloudflare",
+   "to": "k2",
+   "type": "route",
+   "cond": "durable logs"
+  },
+  {
+   "from": "cloudflare",
+   "to": "basin",
+   "type": "route",
+   "cond": "analytics pipelines, R2 SQL"
+  },
+  {
+   "from": "cloudflare",
+   "to": "cloudflare-email-service",
+   "type": "route",
+   "cond": "email"
+  },
+  {
+   "from": "cloudflare",
+   "to": "cloudflare-one",
+   "type": "route",
+   "cond": "zero trust"
+  },
+  {
+   "from": "cloudflare",
+   "to": "turnstile-spin",
+   "type": "route",
+   "cond": "bot verification"
+  },
+  {
+   "from": "cloudflare",
+   "to": "nextjs-on-cloudflare",
+   "type": "route",
+   "cond": "Next.js on Workers"
+  },
+  {
+   "from": "cloudflare",
+   "to": "sandbox-stable",
+   "type": "route",
+   "cond": "sandbox apps"
+  },
+  {
+   "from": "cloudflare-one",
+   "to": "cloudflare-one-migrations",
+   "type": "alt",
+   "cond": "migrating from another vendor: migrations"
+  },
+  {
+   "from": "sandbox-stable",
+   "to": "sandbox-next",
+   "type": "alt",
+   "cond": "app on the preview SDK: next"
+  },
+  {
+   "from": "sandbox-stable",
+   "to": "sandbox-migrate-to-next",
+   "type": "alt",
+   "cond": "porting stable to preview: migrate"
+  },
+  {
+   "from": "sandbox-next",
+   "to": "sandbox-migrate-to-next",
+   "type": "alt",
+   "cond": "porting stable to preview: migrate"
+  },
+  {
+   "from": "workers-best-practices",
+   "to": "wrangler",
+   "type": "feeds",
+   "cond": "deploy and configure after writing"
+  },
+  {
+   "from": "nextjs-on-cloudflare",
+   "to": "wrangler",
+   "type": "feeds",
+   "cond": "deploy the app"
+  },
+  {
+   "from": "durable-objects",
+   "to": "workers-best-practices",
+   "type": "feeds",
+   "cond": "DO code lives in a Worker"
+  },
+  {
+   "from": "agents-sdk",
+   "to": "durable-objects",
+   "type": "feeds",
+   "cond": "agents run on Durable Objects"
+  },
+  {
+   "from": "basin",
+   "to": "k2",
+   "type": "alt",
+   "cond": "analytics tables: basin; raw durable log: k2"
+  },
+  {
+   "from": "web-perf",
+   "to": "wrangler",
+   "type": "handoff",
+   "cond": "ship perf fixes"
+  },
+  {
+   "from": "redis-core",
+   "to": "redis-search",
+   "type": "route",
+   "cond": "search, vector, RAG"
+  },
+  {
+   "from": "redis-core",
+   "to": "redis-connections",
+   "type": "route",
+   "cond": "client config"
+  },
+  {
+   "from": "redis-core",
+   "to": "redis-clustering",
+   "type": "route",
+   "cond": "sharding, CROSSSLOT"
+  },
+  {
+   "from": "redis-core",
+   "to": "redis-security",
+   "type": "route",
+   "cond": "hardening"
+  },
+  {
+   "from": "redis-core",
+   "to": "redis-observability",
+   "type": "route",
+   "cond": "monitoring"
+  },
+  {
+   "from": "redis-core",
+   "to": "redis-semantic-cache",
+   "type": "route",
+   "cond": "LLM cache"
+  },
+  {
+   "from": "redis-core",
+   "to": "iris-development",
+   "type": "route",
+   "cond": "agent memory"
+  },
+  {
+   "from": "redis-connections",
+   "to": "redis-observability",
+   "type": "feeds",
+   "cond": "tune after measuring"
+  },
+  {
+   "from": "redis-search",
+   "to": "redis-observability",
+   "type": "feeds",
+   "cond": "profile slow queries"
+  },
+  {
+   "from": "redis-semantic-cache",
+   "to": "redis-search",
+   "type": "feeds",
+   "cond": "vector similarity underneath"
+  },
+  {
+   "from": "redis-core",
+   "to": "supabase-postgres-best-practices",
+   "type": "alt",
+   "cond": "relational data: Postgres; cache, counters, queues: Redis"
+  },
+  {
+   "from": "supabase-postgres-best-practices",
+   "to": "debug",
+   "type": "on-error",
+   "cond": "slow query, wrong rows visible"
+  },
+  {
+   "from": "ui-skills-root",
+   "to": "baseline-ui",
+   "type": "route",
+   "cond": "quick polish"
+  },
+  {
+   "from": "ui-skills-root",
+   "to": "improve-ui",
+   "type": "route",
+   "cond": "evidence-based audit"
+  },
+  {
+   "from": "ui-skills-root",
+   "to": "create-design-md",
+   "type": "route",
+   "cond": "document design language"
+  },
+  {
+   "from": "ui-skills-root",
+   "to": "fixing-accessibility",
+   "type": "route",
+   "cond": "a11y"
+  },
+  {
+   "from": "ui-skills-root",
+   "to": "fixing-motion-performance",
+   "type": "route",
+   "cond": "animation jank"
+  },
+  {
+   "from": "ui-skills-root",
+   "to": "fixing-metadata",
+   "type": "route",
+   "cond": "page metadata"
+  },
+  {
+   "from": "create-design-md",
+   "to": "frontend-design",
+   "type": "feeds",
+   "cond": "design context for new UI"
+  },
+  {
+   "from": "frontend-design",
+   "to": "vercel-react-best-practices",
+   "type": "feeds",
+   "cond": "implement in React/Next.js"
+  },
+  {
+   "from": "frontend-design",
+   "to": "vercel-composition-patterns",
+   "type": "feeds",
+   "cond": "component API design"
+  },
+  {
+   "from": "frontend-design",
+   "to": "baseline-ui",
+   "type": "feeds",
+   "cond": "polish pass after building"
+  },
+  {
+   "from": "frontend-design",
+   "to": "sleek-design-mobile-apps",
+   "type": "alt",
+   "cond": "mobile screens: sleek; web: frontend-design"
+  },
+  {
+   "from": "sleek-design-mobile-apps",
+   "to": "vercel-react-native-skills",
+   "type": "feeds",
+   "cond": "implement designs in React Native"
+  },
+  {
+   "from": "improve-ui",
+   "to": "web-design-guidelines",
+   "type": "alt",
+   "cond": "audit by own evidence: improve-ui; by public guidelines: web-design-guidelines"
+  },
+  {
+   "from": "web-design-guidelines",
+   "to": "fixing-accessibility",
+   "type": "feeds",
+   "cond": "fix a11y findings"
+  },
+  {
+   "from": "web-design-guidelines",
+   "to": "fixing-motion-performance",
+   "type": "feeds",
+   "cond": "fix motion findings"
+  },
+  {
+   "from": "improve-ui",
+   "to": "deliver",
+   "type": "report",
+   "cond": "implementation plan"
+  },
+  {
+   "from": "p-design",
+   "to": "p-figma",
+   "type": "feeds",
+   "cond": "critique or handoff needs the file"
+  },
+  {
+   "from": "p-design",
+   "to": "p-eng",
+   "type": "handoff",
+   "cond": "specs to developers"
+  },
+  {
+   "from": "p-figma",
+   "to": "frontend-design",
+   "type": "feeds",
+   "cond": "design to code"
+  },
+  {
+   "from": "vercel-react-best-practices",
+   "to": "web-perf",
+   "type": "feeds",
+   "cond": "verify Core Web Vitals"
+  },
+  {
+   "from": "fixing-motion-performance",
+   "to": "web-perf",
+   "type": "feeds",
+   "cond": "verify interaction performance"
+  },
+  {
+   "from": "seo-audit",
+   "to": "fixing-metadata",
+   "type": "feeds",
+   "cond": "fix metadata issues found"
+  },
+  {
+   "from": "seo-audit",
+   "to": "web-perf",
+   "type": "feeds",
+   "cond": "speed issues found"
+  },
+  {
+   "from": "seo-audit",
+   "to": "deliver",
+   "type": "report",
+   "cond": "audit document"
+  },
+  {
+   "from": "p-seo",
+   "to": "p-web",
+   "type": "feeds",
+   "cond": "competitor pages, SERPs"
+  },
+  {
+   "from": "p-seo",
+   "to": "seo-audit",
+   "type": "alt",
+   "cond": "strategy and keywords: p-seo; site diagnosis: seo-audit"
+  },
+  {
+   "from": "p-seo",
+   "to": "deliver",
+   "type": "report",
+   "cond": "strategy document"
+  },
+  {
+   "from": "agent-browser",
+   "to": "p-web",
+   "type": "alt",
+   "cond": "interactive or logged-in pages: agent-browser; bulk extraction: p-web"
+  },
+  {
+   "from": "agent-browser",
+   "to": "source",
+   "type": "feeds",
+   "cond": "scraped pages become data"
+  },
+  {
+   "from": "agent-browser",
+   "to": "web-design-guidelines",
+   "type": "feeds",
+   "cond": "test the running app, then review UI"
+  },
+  {
+   "from": "sigma",
+   "to": "book-study",
+   "type": "alt",
+   "cond": "topic learning: sigma; a specific book: book-study"
+  },
+  {
+   "from": "sigma",
+   "to": "wiki-ingest",
+   "type": "feeds",
+   "cond": "save what was learned"
+  },
+  {
+   "from": "book-study",
+   "to": "wiki-ingest",
+   "type": "feeds",
+   "cond": "compile notes"
+  },
+  {
+   "from": "skill-forge",
+   "to": "skill-review",
+   "type": "feeds",
+   "cond": "audit the new skill"
+  },
+  {
+   "from": "skill-creator",
+   "to": "skill-review",
+   "type": "feeds",
+   "cond": "audit the new skill"
+  },
+  {
+   "from": "skill-forge",
+   "to": "skill-creator",
+   "type": "alt",
+   "cond": "design guidance: forge; evals and benchmarks: creator"
+  },
+  {
+   "from": "skill-creator",
+   "to": "hub",
+   "type": "maintain",
+   "cond": "register new skill in graph.py"
+  },
+  {
+   "from": "skill-forge",
+   "to": "hub",
+   "type": "maintain",
+   "cond": "register new skill in graph.py"
+  },
+  {
+   "from": "find-skills",
+   "to": "hub",
+   "type": "maintain",
+   "cond": "register installed skill in graph.py"
+  },
+  {
+   "from": "remotion-best-practices",
+   "to": "vercel-react-best-practices",
+   "type": "alt",
+   "cond": "Remotion is React: reuse React guidance"
+  }
+ ]
+}
