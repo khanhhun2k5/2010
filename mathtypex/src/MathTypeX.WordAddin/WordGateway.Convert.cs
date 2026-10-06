@@ -129,16 +129,17 @@ namespace MathTypeX.WordAddin
                 return report;
             }
             dynamic undo = _app.UndoRecord;
+            var records = new List<EquationRecord>();
             undo.StartCustomRecord("MathTypeX: chuyển LaTeX");
             try
             {
-                var records = new List<EquationRecord>();
                 ApplyPlan(story, plan, settings, report, records, progress: null);
-                SaveRecords(doc, records);
             }
             finally
             {
                 undo.EndCustomRecord();
+                // Kể cả khi giữa chừng có lỗi: công thức đã chèn vẫn phải có metadata (source LaTeX gốc).
+                SaveRecords(doc, records);
             }
             LogReport("Convert Selection", report);
             return report;
@@ -249,8 +250,8 @@ namespace MathTypeX.WordAddin
             {
                 _app.ScreenUpdating = screenUpdating;
                 undo.EndCustomRecord();
+                SaveRecords(scan.Document, records);
             }
-            SaveRecords(scan.Document, records);
             LogReport("Convert Document", report);
             return report;
         }
@@ -265,40 +266,52 @@ namespace MathTypeX.WordAddin
             for (int k = plan.Items.Count - 1; k >= 0; k--)
             {
                 var item = plan.Items[k];
-                int rs = story.BaseStart + item.ReplaceStart, re = story.BaseStart + item.ReplaceEnd;
-                dynamic source = RangeAt(anchor, story.BaseStart + item.Candidate.Start, story.BaseStart + item.Candidate.End);
-                EditResult? result = Compose(item, source, settings, out string? error);
-                if (result is null)
+                try
                 {
-                    report.Problems.Add($"{Shorten(item.SourceText)} — {error}");
+                    ApplyItem(anchor, story, item, settings, report, records);
                 }
-                else if (ReadText(RangeAt(anchor, rs, re)) != item.ExpectedText)
+                catch (Exception ex) when (ex is not OutOfMemoryException)
                 {
-                    report.Problems.Add($"{Shorten(item.SourceText)} — văn bản đã thay đổi trong lúc chuyển");
-                }
-                else
-                {
-                    if (item.BreakAfter) RangeAt(anchor, re, re).InsertParagraphAfter();
-                    if (item.BreakBefore)
-                    {
-                        RangeAt(anchor, rs, rs).InsertParagraphAfter();
-                        rs++;
-                        re++;
-                    }
-                    int end = InsertMath(anchor, RangeAt(anchor, rs, re), result.FlatOpc, item.Display);
-                    if (end < 0)
-                    {
-                        report.Problems.Add($"{Shorten(item.SourceText)} — Word không nhận equation (xem Nhật ký)");
-                    }
-                    else
-                    {
-                        report.Converted++;
-                        records.Add(CreateRecord(item, result));
-                    }
+                    // Một mục lỗi (vùng bị khoá, nội dung được bảo vệ, lỗi COM…) không được bỏ dở cả lô.
+                    AddinLog.Error("Convert: " + item.SourceText, ex);
+                    report.Problems.Add($"{Shorten(item.SourceText)} — {ex.Message}");
                 }
                 if (progress is not null && !progress()) return false;
             }
             return true;
+        }
+
+        private static void ApplyItem(dynamic anchor, StoryText story, ConversionItem item, UserSettings settings, ConversionReport report, List<EquationRecord> records)
+        {
+            int rs = story.BaseStart + item.ReplaceStart, re = story.BaseStart + item.ReplaceEnd;
+            dynamic source = RangeAt(anchor, story.BaseStart + item.Candidate.Start, story.BaseStart + item.Candidate.End);
+            EditResult? result = Compose(item, source, settings, out string? error);
+            if (result is null)
+            {
+                report.Problems.Add($"{Shorten(item.SourceText)} — {error}");
+                return;
+            }
+            if (ReadText(RangeAt(anchor, rs, re)) != item.ExpectedText)
+            {
+                report.Problems.Add($"{Shorten(item.SourceText)} — văn bản đã thay đổi trong lúc chuyển");
+                return;
+            }
+
+            if (item.BreakAfter) RangeAt(anchor, re, re).InsertParagraphAfter();
+            if (item.BreakBefore)
+            {
+                RangeAt(anchor, rs, rs).InsertParagraphAfter();
+                rs++;
+                re++;
+            }
+            int end = InsertMath(anchor, RangeAt(anchor, rs, re), result.FlatOpc, item.Display);
+            if (end < 0)
+            {
+                report.Problems.Add($"{Shorten(item.SourceText)} — Word không nhận equation (xem Nhật ký)");
+                return;
+            }
+            report.Converted++;
+            records.Add(CreateRecord(item, result));
         }
 
         private static EditResult? Compose(ConversionItem item, dynamic source, UserSettings settings, out string? error)
@@ -442,7 +455,9 @@ namespace MathTypeX.WordAddin
             dynamic mode = range.TextRetrievalMode;
             mode.IncludeHiddenText = true;
             mode.IncludeFieldCodes = true;
-            return (range.Text as string) ?? "";
+            // Dấu hết ô/hàng của bảng chiếm MỘT vị trí trong tài liệu nhưng Range.Text trả về hai ký tự "\r\a":
+            // thu về "\a" để vị trí trong chuỗi khớp vị trí Range (nếu không, mọi công thức sau bảng đều lệch).
+            return ((range.Text as string) ?? "").Replace("\r\a", "\a");
         }
 
         /// <summary>Không chuyển: đã nằm trong equation, chữ ẩn, định dạng code hoặc style "MTX Ignore" (docs/05 §9.4 bảng quy tắc).</summary>

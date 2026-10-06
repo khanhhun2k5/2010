@@ -78,7 +78,7 @@ public static class ConversionPlanner
             ConversionItem item;
             if (!c.Display)
             {
-                item = Make(c, c.Start, c.End, latex, display: false, breakBefore: false, breakAfter: false, text, notes);
+                item = Make(c, c.Start, c.End, latex, display: false, breakBefore: false, breakAfter: false, text, notes, c.End);
             }
             else
             {
@@ -105,9 +105,11 @@ public static class ConversionPlanner
                 int k = c.End;
                 while (k < pEnd && IsInlineSpace(text[k])) k++;
                 int punctEnd = k;
+                int sourceEnd = c.End;
                 while (punctEnd < pEnd && Punctuation.IndexOf(text[punctEnd]) >= 0) punctEnd++;
                 if (punctEnd > k)
                 {
+                    sourceEnd = punctEnd;
                     latex += text.Substring(k, punctEnd - k);
                     notes.Add("đưa dấu câu phía sau vào công thức");
                     k = punctEnd;
@@ -126,7 +128,7 @@ public static class ConversionPlanner
                     re = k;
                     breakAfter = true;
                 }
-                item = Make(c, rs, re, latex, display: true, breakBefore, breakAfter, text, notes);
+                item = Make(c, rs, re, latex, display: true, breakBefore, breakAfter, text, notes, sourceEnd);
             }
             items.Add(item);
             previous = item;
@@ -134,7 +136,7 @@ public static class ConversionPlanner
         return new ConversionPlan(items, low);
     }
 
-    private static ConversionItem Make(MathCandidate c, int rs, int re, string latex, bool display, bool breakBefore, bool breakAfter, string text, List<string> notes) => new()
+    private static ConversionItem Make(MathCandidate c, int rs, int re, string latex, bool display, bool breakBefore, bool breakAfter, string text, List<string> notes, int sourceEnd) => new()
     {
         Candidate = c,
         ReplaceStart = rs,
@@ -144,7 +146,8 @@ public static class ConversionPlanner
         BreakBefore = breakBefore,
         BreakAfter = breakAfter,
         ExpectedText = text.Substring(rs, re - rs),
-        SourceText = text.Substring(c.Start, c.Length),
+        // Gồm cả dấu câu đã gộp vào công thức ("$$E=mc^2$$."), để "Trả về LaTeX" không làm mất dấu chấm.
+        SourceText = text.Substring(c.Start, sourceEnd - c.Start),
         Notes = notes,
     };
 

@@ -66,6 +66,15 @@ public class ConversionTests
         Assert.Equal(text, Simulate(text, start + 1, text.Length - 5));
     }
 
+    [Theory]
+    [InlineData("$$x$$ , nên\r", "$$x$$ ,")]
+    [InlineData("$$x$$\r", "$$x$$")]
+    [InlineData("Ta có $y$. Xong\r", "$y$")]
+    public void SourceTextKeepsAbsorbedPunctuationOnly(string text, string source)
+    {
+        Assert.Equal(source, ConversionPlanner.Plan(text, 0, text.Length).Items.Single().SourceText);
+    }
+
     [Fact]
     public void LowConfidenceCandidatesAreReportedNotConverted()
     {
@@ -79,7 +88,8 @@ public class ConversionTests
     public void KeepsTheOriginalSourceForRevert()
     {
         var item = ConversionPlanner.Plan("Ta có $$x$$. Do đó\r", 0, 18).Items.Single();
-        Assert.Equal("$$x$$", item.SourceText);
+        // Dấu chấm đã vào công thức nên cũng phải nằm trong văn bản gốc để "Trả về LaTeX" trả lại đủ.
+        Assert.Equal("$$x$$.", item.SourceText);
         Assert.Equal("x.", item.Latex);
         Assert.Contains(item.Notes, n => n.Contains("dấu câu"));
     }
