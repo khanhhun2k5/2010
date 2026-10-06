@@ -1,0 +1,31 @@
+name: MathTypeX
+
+on:
+  push:
+    paths: [ "mathtypex/**", ".github/workflows/mathtypex.yml" ]
+  pull_request:
+    paths: [ "mathtypex/**", ".github/workflows/mathtypex.yml" ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mathtypex
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Build
+        run: dotnet build MathTypeX.slnx -c Release
+      - name: Test
+        run: dotnet test --solution MathTypeX.slnx -c Release --no-build
+      - name: Sinh tài liệu demo
+        run: |
+          dotnet run --project src/MathTypeX.Cli -c Release --no-build -- docx tests/corpus/integrals.tex --out out/integrals-demo.docx
+          dotnet run --project src/MathTypeX.Cli -c Release --no-build -- docx tests/corpus/typography.tex --out out/typography-demo.docx --sizing TeX
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mathtypex-demo-docx
+          path: mathtypex/out/*.docx

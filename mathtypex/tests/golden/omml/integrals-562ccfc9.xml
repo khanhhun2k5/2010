@@ -1,0 +1,296 @@
+<!-- \int_0^1 \frac{\frac{x^2+1}{x+1}}{\sqrt{1-x^4}}\,dx -->
+<!-- inline -->
+<m:oMath xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <m:nary>
+    <m:naryPr>
+      <m:chr m:val="∫" />
+      <m:limLoc m:val="subSup" />
+      <m:ctrlPr>
+        <w:rPr>
+          <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+        </w:rPr>
+      </m:ctrlPr>
+    </m:naryPr>
+    <m:sub>
+      <m:r>
+        <w:rPr>
+          <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+        </w:rPr>
+        <m:t xml:space="preserve">0</m:t>
+      </m:r>
+    </m:sub>
+    <m:sup>
+      <m:r>
+        <w:rPr>
+          <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+        </w:rPr>
+        <m:t xml:space="preserve">1</m:t>
+      </m:r>
+    </m:sup>
+    <m:e>
+      <m:f>
+        <m:fPr>
+          <m:ctrlPr>
+            <w:rPr>
+              <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+            </w:rPr>
+          </m:ctrlPr>
+        </m:fPr>
+        <m:num>
+          <m:f>
+            <m:fPr>
+              <m:ctrlPr>
+                <w:rPr>
+                  <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                </w:rPr>
+              </m:ctrlPr>
+            </m:fPr>
+            <m:num>
+              <m:sSup>
+                <m:sSupPr>
+                  <m:ctrlPr>
+                    <w:rPr>
+                      <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                    </w:rPr>
+                  </m:ctrlPr>
+                </m:sSupPr>
+                <m:e>
+                  <m:r>
+                    <w:rPr>
+                      <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                    </w:rPr>
+                    <m:t xml:space="preserve">x</m:t>
+                  </m:r>
+                </m:e>
+                <m:sup>
+                  <m:r>
+                    <w:rPr>
+                      <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                    </w:rPr>
+                    <m:t xml:space="preserve">2</m:t>
+                  </m:r>
+                </m:sup>
+              </m:sSup>
+              <m:r>
+                <w:rPr>
+                  <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                </w:rPr>
+                <m:t xml:space="preserve">+1</m:t>
+              </m:r>
+            </m:num>
+            <m:den>
+              <m:r>
+                <w:rPr>
+                  <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                </w:rPr>
+                <m:t xml:space="preserve">x+1</m:t>
+              </m:r>
+            </m:den>
+          </m:f>
+        </m:num>
+        <m:den>
+          <m:rad>
+            <m:radPr>
+              <m:degHide m:val="1" />
+              <m:ctrlPr>
+                <w:rPr>
+                  <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                </w:rPr>
+              </m:ctrlPr>
+            </m:radPr>
+            <m:deg />
+            <m:e>
+              <m:r>
+                <w:rPr>
+                  <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                </w:rPr>
+                <m:t xml:space="preserve">1−</m:t>
+              </m:r>
+              <m:sSup>
+                <m:sSupPr>
+                  <m:ctrlPr>
+                    <w:rPr>
+                      <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                    </w:rPr>
+                  </m:ctrlPr>
+                </m:sSupPr>
+                <m:e>
+                  <m:r>
+                    <w:rPr>
+                      <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                    </w:rPr>
+                    <m:t xml:space="preserve">x</m:t>
+                  </m:r>
+                </m:e>
+                <m:sup>
+                  <m:r>
+                    <w:rPr>
+                      <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                    </w:rPr>
+                    <m:t xml:space="preserve">4</m:t>
+                  </m:r>
+                </m:sup>
+              </m:sSup>
+            </m:e>
+          </m:rad>
+        </m:den>
+      </m:f>
+      <m:r>
+        <w:rPr>
+          <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+        </w:rPr>
+        <m:t xml:space="preserve"> dx</m:t>
+      </m:r>
+    </m:e>
+  </m:nary>
+</m:oMath>
+<!-- display -->
+<m:oMathPara xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <m:oMathParaPr>
+    <m:jc m:val="centerGroup" />
+  </m:oMathParaPr>
+  <m:oMath>
+    <m:nary>
+      <m:naryPr>
+        <m:chr m:val="∫" />
+        <m:limLoc m:val="subSup" />
+        <m:ctrlPr>
+          <w:rPr>
+            <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+          </w:rPr>
+        </m:ctrlPr>
+      </m:naryPr>
+      <m:sub>
+        <m:r>
+          <w:rPr>
+            <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+          </w:rPr>
+          <m:t xml:space="preserve">0</m:t>
+        </m:r>
+      </m:sub>
+      <m:sup>
+        <m:r>
+          <w:rPr>
+            <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+          </w:rPr>
+          <m:t xml:space="preserve">1</m:t>
+        </m:r>
+      </m:sup>
+      <m:e>
+        <m:f>
+          <m:fPr>
+            <m:ctrlPr>
+              <w:rPr>
+                <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+              </w:rPr>
+            </m:ctrlPr>
+          </m:fPr>
+          <m:num>
+            <m:f>
+              <m:fPr>
+                <m:ctrlPr>
+                  <w:rPr>
+                    <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                  </w:rPr>
+                </m:ctrlPr>
+              </m:fPr>
+              <m:num>
+                <m:sSup>
+                  <m:sSupPr>
+                    <m:ctrlPr>
+                      <w:rPr>
+                        <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                      </w:rPr>
+                    </m:ctrlPr>
+                  </m:sSupPr>
+                  <m:e>
+                    <m:r>
+                      <w:rPr>
+                        <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                      </w:rPr>
+                      <m:t xml:space="preserve">x</m:t>
+                    </m:r>
+                  </m:e>
+                  <m:sup>
+                    <m:r>
+                      <w:rPr>
+                        <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                      </w:rPr>
+                      <m:t xml:space="preserve">2</m:t>
+                    </m:r>
+                  </m:sup>
+                </m:sSup>
+                <m:r>
+                  <w:rPr>
+                    <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                  </w:rPr>
+                  <m:t xml:space="preserve">+1</m:t>
+                </m:r>
+              </m:num>
+              <m:den>
+                <m:r>
+                  <w:rPr>
+                    <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                  </w:rPr>
+                  <m:t xml:space="preserve">x+1</m:t>
+                </m:r>
+              </m:den>
+            </m:f>
+          </m:num>
+          <m:den>
+            <m:rad>
+              <m:radPr>
+                <m:degHide m:val="1" />
+                <m:ctrlPr>
+                  <w:rPr>
+                    <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                  </w:rPr>
+                </m:ctrlPr>
+              </m:radPr>
+              <m:deg />
+              <m:e>
+                <m:r>
+                  <w:rPr>
+                    <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                  </w:rPr>
+                  <m:t xml:space="preserve">1−</m:t>
+                </m:r>
+                <m:sSup>
+                  <m:sSupPr>
+                    <m:ctrlPr>
+                      <w:rPr>
+                        <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                      </w:rPr>
+                    </m:ctrlPr>
+                  </m:sSupPr>
+                  <m:e>
+                    <m:r>
+                      <w:rPr>
+                        <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                      </w:rPr>
+                      <m:t xml:space="preserve">x</m:t>
+                    </m:r>
+                  </m:e>
+                  <m:sup>
+                    <m:r>
+                      <w:rPr>
+                        <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                      </w:rPr>
+                      <m:t xml:space="preserve">4</m:t>
+                    </m:r>
+                  </m:sup>
+                </m:sSup>
+              </m:e>
+            </m:rad>
+          </m:den>
+        </m:f>
+        <m:r>
+          <w:rPr>
+            <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+          </w:rPr>
+          <m:t xml:space="preserve"> dx</m:t>
+        </m:r>
+      </m:e>
+    </m:nary>
+  </m:oMath>
+</m:oMathPara>

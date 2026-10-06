@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/MathTypeX.Ast/MathTypeX.Ast.csproj" />
+    <Project Path="src/MathTypeX.Cli/MathTypeX.Cli.csproj" />
+    <Project Path="src/MathTypeX.Core/MathTypeX.Core.csproj" />
+    <Project Path="src/MathTypeX.OpenXml/MathTypeX.OpenXml.csproj" />
+    <Project Path="src/MathTypeX.Parser/MathTypeX.Parser.csproj" />
+    <Project Path="src/MathTypeX.Render.Omml/MathTypeX.Render.Omml.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/MathTypeX.Parser.Tests/MathTypeX.Parser.Tests.csproj" />
+    <Project Path="tests/MathTypeX.Render.Omml.Tests/MathTypeX.Render.Omml.Tests.csproj" />
+  </Folder>
+</Solution>

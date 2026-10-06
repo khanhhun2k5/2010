@@ -2,9 +2,8 @@
 
 Add-in cho Microsoft Word và PowerPoint trên Windows. Người dùng gõ công thức nhanh như gõ LaTeX, kể cả khi chưa biết LaTeX. Kết quả được chèn thành **Word Equation gốc (OMML)**, hoặc thành **hình vector dựng bằng TeX** khi cần typography đúng kiểu LaTeX. Source LaTeX luôn được giữ lại để sửa sau.
 
-> **Trạng thái:** đang thiết kế, theo *Nhiệm vụ đầu tiên* (§57). Chưa có code sản phẩm.
-> Các tài liệu dưới đây là **đề xuất để review**, chưa phải spec đã chốt. Phần còn lại của tài liệu
-> chuyển giao (PRD, Test strategy chi tiết…) sẽ được viết sau khi các quyết định ở cuối file này được xác nhận.
+> **Trạng thái:** thiết kế đã được chốt ngày 06/10/2026 (xem *Quyết định đã chốt* ở cuối file).
+> Đang triển khai theo vertical slice, bắt đầu từ VS-1 (core headless). Hướng dẫn build và tiến độ xem [docs/12-progress.md](docs/12-progress.md).
 
 ---
 
@@ -76,12 +75,12 @@ Mọi hành vi của Office mà tôi chưa kiểm chứng được bằng tài l
 
 | ID | Quyết định | Lý do ngắn |
 |---|---|---|
-| D1 | Add-in **VSTO (.NET Framework 4.8)** giữ ở mức thật mỏng; MVP không dùng Office.js | Office.js không hook được phím ở mức sâu, không biết toạ độ con trỏ, không chạy được TeX, không đọc được danh sách font đã cài |
+| D1 | Add-in **COM (`IDTExtensibility2` + `IRibbonExtensibility`), .NET Framework 4.8, project SDK-style, không dùng VSTO** (đổi so với bản đề xuất, xem [ADR-0002](docs/adr/0002-com-addin-instead-of-vsto.md)); giữ ở mức thật mỏng; không dùng Office.js | Office.js không hook được phím ở mức sâu, không biết toạ độ con trỏ, không chạy được TeX, không đọc được danh sách font đã cài. Bỏ VSTO để build được bằng `dotnet build`, không cần Visual Studio |
 | D2 | Ba tiến trình: add-in in-proc → `MathTypeX.Editor.exe` (.NET 10, WPF) → `MathTypeX.TexWorker.exe` (sandbox) | Dùng được .NET hiện đại; crash không kéo Word theo; add-in tải nhanh nên không bị Office tự vô hiệu hoá; bộ gõ tiếng Việt loại trừ được theo tên tiến trình |
 | D3 | **AST là trung tâm.** Thư viện core target `netstandard2.0` + `net10.0` | Dùng chung cho add-in (net48), editor, CLI và test |
 | D4 | Preview bằng **MathML Core trong WebView2** | Chromium dựng công thức từ bảng OpenType MATH của *chính font đã cài*; nhanh (vài ms); Office 365 vốn đã kèm WebView2 |
 | D5 | Native: **tự sinh OMML từ AST**, chèn bằng `Range.InsertXML` | Kiểm soát hoàn toàn cấu trúc (`m:nary`, `m:d`, `m:m`…); không phụ thuộc AutoCorrect hay build-up của Word |
-| D6 | Exact: **LuaLaTeX + `unicode-math`** (font OTF, `range=` cho từng lớp ký hiệu), **pdfLaTeX** (package cũ) → `dvisvgm` (glyph chuyển thành path) → SVG, cộng EMF tự chuyển đổi | Đúng typography TeX, giữ vector |
+| D6 | Exact: **LuaLaTeX + `unicode-math`** (font OTF, `range=` cho từng lớp ký hiệu), **pdfLaTeX** (package cũ) → `dvisvgm` (glyph chuyển thành path) → SVG (Office 365 hỗ trợ SVG, nên EMF chỉ còn là tuỳ chọn về sau) | Đúng typography TeX, giữ vector |
 | D7 | Chế độ `Auto` chọn backend dựa trên **Native Capability Matrix đo bằng thực nghiệm** | Không đoán xem Word làm được gì |
 | D8 | Metadata lưu trong **CustomXMLPart**, khoá là **hash của OMML→AST đã chuẩn hoá**. Thêm kho cục bộ, và chuyển ngược OMML→LaTeX làm lưới an toàn | Không chèn "marker ẩn" vào công thức; copy/paste trong cùng tài liệu vẫn sửa lại được |
 | D9 | ∫ luôn được dựng như **cấu trúc n-ary**, không bao giờ là một ký tự text | Đáp ứng §4 và §53 |
@@ -89,11 +88,15 @@ Mọi hành vi của Office mà tôi chưa kiểm chứng được bằng tài l
 
 ---
 
-## Câu hỏi mở (cần anh/chị quyết định trước khi viết spec chi tiết)
+## Quyết định đã chốt (06/10/2026)
 
-1. **Phiên bản Office:** chỉ hỗ trợ M365/2021/2024, hay phải hỗ trợ đầy đủ cả 2016/2019? Câu trả lời quyết định SVG hay EMF là mặc định, và lượng test cần chạy.
-2. **Mô hình tiến trình:** anh/chị có đồng ý tách editor thành `.exe` riêng (D2) không? Phương án thay thế là chạy toàn bộ in-proc trên .NET Framework 4.8.
-3. **TeX:** yêu cầu người dùng tự cài MiKTeX/TeX Live, hay đóng gói kèm một bản TeX tối giản (thêm khoảng vài trăm MB)?
-4. **Cỡ ∫ mặc định:** chọn `TeX` (hai cỡ, đúng LaTeX) hay `Grow` (kéo dãn theo nội dung)?
-5. **Mô hình phát hành:** thương mại/đóng hay mã nguồn mở? Điều này ảnh hưởng tới việc chọn license và tới việc ký số.
-6. **Nguồn lực thực tế** (số người, thời gian) để hiệu chỉnh roadmap.
+| # | Câu hỏi | Trả lời | Hệ quả cho thiết kế |
+|---|---|---|---|
+| Q1 | Phiên bản Office | **Office 365** (Microsoft 365 Apps) | SVG là định dạng vector mặc định; không làm EMF trong MVP; Capability Matrix chỉ đo trên M365 |
+| Q2 | Editor là tiến trình riêng | **Đồng ý** | Giữ D2 |
+| Q3 | TeX | **MiKTeX** (người dùng tự cài) | Phát hiện bản cài MiKTeX; cờ bảo mật theo MiKTeX (`--disable-installer`, `--disable-write18`); tắt tự cài package |
+| Q4 | Cỡ ∫ mặc định | **`TeX`**, chuyển sang `Grow`/`Scale` được | Giữ D9 và [04 §8.2](docs/04-fonts-and-integrals.md#82-ba-chế-độ-cỡ-narysizing) |
+| Q5 | Phát hành | **Mã nguồn mở, dùng cá nhân** | License MIT; không bắt buộc ký số (có thể bị SmartScreen/Defender hỏi lại khi chạy lần đầu); không có telemetry |
+| Q6 | Nguồn lực | **Claude viết toàn bộ code** | Roadmap tính theo slice, không theo tuần. Phần nào cần Windows + Office để kiểm tra thì tôi viết sẵn kịch bản kiểm tra để anh/chị chạy |
+
+Chi tiết lý do và các quyết định phát sinh khi triển khai được ghi trong [docs/adr/](docs/adr/).

@@ -1,0 +1,17 @@
+<Project>
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Deterministic>true</Deterministic>
+    <Authors>MathTypeX contributors</Authors>
+    <Company>MathTypeX</Company>
+    <Product>MathTypeX</Product>
+    <Copyright>MIT License</Copyright>
+    <Version>0.1.0</Version>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <!-- Cho phép compile project Windows (WPF, net48 COM add-in) trên Linux CI -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+  </PropertyGroup>
+</Project>

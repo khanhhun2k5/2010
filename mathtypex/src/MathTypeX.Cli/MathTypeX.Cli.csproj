@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>mtx</AssemblyName>
+    <RootNamespace>MathTypeX.Cli</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MathTypeX.Parser\MathTypeX.Parser.csproj" />
+    <ProjectReference Include="..\MathTypeX.Render.Omml\MathTypeX.Render.Omml.csproj" />
+    <ProjectReference Include="..\MathTypeX.OpenXml\MathTypeX.OpenXml.csproj" />
+  </ItemGroup>
+</Project>
