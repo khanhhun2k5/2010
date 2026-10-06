@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using MathTypeX.Ast;
 using MathTypeX.Editing;
+using MathTypeX.Fonts;
 using MathTypeX.Interop;
 using MathTypeX.Parsing;
 
@@ -20,10 +21,12 @@ namespace MathTypeX.Editor;
 /// </summary>
 internal sealed class EditorWindow : Window
 {
-    private static readonly string[] CandidateFonts =
+    /// <summary>Thứ tự ưu tiên hiển thị; các font toán khác (quét được) xếp sau.</summary>
+    private static readonly string[] PreferredFonts =
     {
-        "Cambria Math", "XITS Math", "Latin Modern Math", "STIX Two Math",
-        "TeX Gyre Termes Math", "TeX Gyre Pagella Math", "Libertinus Math", "Fira Math", "Asana Math",
+        "Cambria Math", "XITS Math", "STIX Two Math", "Latin Modern Math", "New Computer Modern Math",
+        "TeX Gyre Termes Math", "TeX Gyre Pagella Math", "TeX Gyre Schola Math", "TeX Gyre Bonum Math",
+        "Libertinus Math", "Fira Math", "Asana Math", "STIX Math",
     };
 
     private readonly EditorSettings _settings;
@@ -32,6 +35,7 @@ internal sealed class EditorWindow : Window
     private readonly ToggleButton _displayToggle;
     private readonly TextBlock _status;
     private readonly TextBlock _notice;
+    private readonly PreviewPane _preview = new();
     private readonly DispatcherTimer _debounce;
     private TaskCompletionSource<EditResult>? _pending;
     private EditRequest _request = new();
@@ -54,17 +58,8 @@ internal sealed class EditorWindow : Window
         AutomationPropertiesHelper.SetName(_displayToggle, "Chế độ inline hoặc display");
 
         _font = new ComboBox { MinWidth = 190, Margin = new Thickness(0, 0, 8, 0), ToolTip = "Font toán (Word Equation)" };
-        foreach (var name in CandidateFonts)
-        {
-            bool installed = Fonts.SystemFontFamilies.Any(f => string.Equals(f.Source, name, StringComparison.OrdinalIgnoreCase));
-            _font.Items.Add(new ComboBoxItem
-            {
-                Content = installed ? name : name + " — chưa cài",
-                Tag = name,
-                IsEnabled = installed,
-                FontFamily = installed ? new FontFamily(name) : null,
-            });
-        }
+        // Trước khi quét xong: chỉ có Cambria Math (luôn có trên Windows/Office) và font đã chọn lần trước.
+        SetFonts(new[] { "Cambria Math", settings.MathFont }.Distinct().Select(n => (n, (string?)null)).ToArray());
         _font.SelectionChanged += (_, _) => ScheduleValidation();
         AutomationPropertiesHelper.SetName(_font, "Font toán");
 
@@ -105,6 +100,7 @@ internal sealed class EditorWindow : Window
         var root = new StackPanel { Margin = new Thickness(12) };
         root.Children.Add(header);
         root.Children.Add(_source);
+        root.Children.Add(_preview);
         root.Children.Add(_notice);
         root.Children.Add(_status);
         Content = root;
@@ -210,7 +206,10 @@ internal sealed class EditorWindow : Window
             ShowStatus("Gõ LaTeX, ví dụ \\int_0^1 \\frac{x^2}{1+x^2}\\,dx", isError: false);
             return;
         }
-        var doc = EquationComposer.Analyze(text, CurrentOptions());
+        var options = CurrentOptions();
+        var doc = EquationComposer.Analyze(text, options);
+        // Vẫn vẽ preview khi có lỗi: parser luôn phục hồi được cây, chỗ thiếu hiện □, lệnh sai tô đỏ.
+        _ = _preview.RenderAsync(doc.Body, options.Display, options.MathFont, options.TextFont, options.FontSizePt ?? 12, _settings.GrowIntegrals);
         var error = doc.Diagnostics.FirstOrDefault(d => d.Severity == DiagnosticSeverity.Error);
         if (error is not null)
         {
@@ -221,7 +220,45 @@ internal sealed class EditorWindow : Window
         var warning = doc.Diagnostics.FirstOrDefault();
         ShowStatus(warning is not null
             ? "⚠ " + DiagnosticFormatter.Format(warning, UiLanguage.Vi)
-            : "✓ " + LatexPrinter.Print(doc), isError: false);
+            : _preview.FailureReason ?? "✓ " + LatexPrinter.Print(doc), isError: false);
+        _source.ToolTip = null;
+    }
+
+    /// <summary>Gắn danh sách font toán quét được; giữ lựa chọn hiện tại nếu còn.</summary>
+    public void SetFonts(IReadOnlyList<(string Family, string? Description)> fonts)
+    {
+        string current = (_font.SelectedItem as ComboBoxItem)?.Tag as string ?? _settings.MathFont;
+        var ordered = fonts
+            .GroupBy(f => f.Family, StringComparer.OrdinalIgnoreCase)
+            .Select(g => g.First())
+            .OrderBy(f => Array.FindIndex(PreferredFonts, p => string.Equals(p, f.Family, StringComparison.OrdinalIgnoreCase)) is var i && i >= 0 ? i : 1000)
+            .ThenBy(f => f.Family, StringComparer.OrdinalIgnoreCase);
+        _font.Items.Clear();
+        foreach (var (family, description) in ordered)
+        {
+            _font.Items.Add(new ComboBoxItem
+            {
+                Content = family,
+                Tag = family,
+                FontFamily = new FontFamily(family),
+                ToolTip = description,
+            });
+        }
+        SelectFont(current);
+    }
+
+    public void SetFonts(IReadOnlyList<FontFace> faces) =>
+        SetFonts(faces.Select(f => (f.Family, (string?)(FontDiagnostics.DescribeIntegral(f) + (f.IsCff ? " · CFF: có thể không nhúng được vào .docx" : "")))).ToArray());
+
+    /// <summary>Hiện cửa sổ ngoài màn hình một lần để khởi tạo WebView2 trước lần Alt+M đầu tiên.</summary>
+    public async Task PrewarmAsync()
+    {
+        Left = -10000;
+        Top = -10000;
+        Opacity = 0;
+        Show();
+        await _preview.InitializeAsync();
+        if (_pending is null) Hide();
     }
 
     private void ShowStatus(string text, bool isError)
@@ -271,13 +308,13 @@ internal sealed class EditorWindow : Window
     {
         foreach (ComboBoxItem item in _font.Items)
         {
-            if ((string)item.Tag == name && item.IsEnabled)
+            if (string.Equals((string)item.Tag, name, StringComparison.OrdinalIgnoreCase))
             {
                 _font.SelectedItem = item;
                 return;
             }
         }
-        _font.SelectedIndex = 0;
+        if (_font.Items.Count > 0) _font.SelectedIndex = 0;
     }
 
     private string SelectedFont() => (_font.SelectedItem as ComboBoxItem)?.Tag as string ?? "Cambria Math";

@@ -17,6 +17,8 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
+      - name: Cài font OpenType MATH (cho test bộ đọc font)
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends fonts-texgyre-math fonts-lmodern
       - name: Build
         run: dotnet build MathTypeX.slnx -c Release
       - name: Test
@@ -25,10 +27,13 @@ jobs:
         run: |
           dotnet run --project src/MathTypeX.Cli -c Release --no-build -- docx tests/corpus/integrals.tex --out out/integrals-demo.docx
           dotnet run --project src/MathTypeX.Cli -c Release --no-build -- docx tests/corpus/typography.tex --out out/typography-demo.docx --sizing TeX
+          dotnet run --project src/MathTypeX.Cli -c Release --no-build -- preview tests/corpus/integrals.tex --display --out out/integrals-preview.html --fonts "Latin Modern Math,TeX Gyre Termes Math,TeX Gyre Pagella Math"
       - uses: actions/upload-artifact@v4
         with:
           name: mathtypex-demo-docx
-          path: mathtypex/out/*.docx
+          path: |
+            mathtypex/out/*.docx
+            mathtypex/out/*.html
       - name: Đóng gói bản Windows (add-in + editor)
         run: tools/package.sh
       - uses: actions/upload-artifact@v4

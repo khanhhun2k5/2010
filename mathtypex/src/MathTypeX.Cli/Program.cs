@@ -2,8 +2,10 @@ using System.Text;
 using MathTypeX;
 using MathTypeX.Ast;
 using MathTypeX.Cli;
+using MathTypeX.Fonts;
 using MathTypeX.OpenXml;
 using MathTypeX.Parsing;
+using MathTypeX.Render.MathMl;
 using MathTypeX.Render.Omml;
 
 Console.OutputEncoding = Encoding.UTF8;
@@ -18,9 +20,13 @@ internal static class Cli
           mtx latex    "<latex>"            In LaTeX chuẩn hoá
           mtx omml     "<latex>" [tuỳ chọn] In OMML (Word Equation)
           mtx flatopc  "<latex>" [tuỳ chọn] In gói Flat OPC dùng cho Range.InsertXML
+          mtx mathml   "<latex>" [--display] In MathML Core (preview)
+          mtx preview  <corpus.tex> --out <file.html> [--fonts "A,B"]
+                                            Trang HTML so sánh font (mở bằng trình duyệt Chromium/Edge)
           mtx docx     <corpus.tex> --out <file.docx> [tuỳ chọn]
                                             Sinh tài liệu Word thử font × chế độ × cỡ ∫ (spike S2)
           mtx validate <file.docx>          Kiểm tra tài liệu theo schema Office
+          mtx fonts                         Liệt kê font OpenType MATH đã cài (và đặc điểm dấu ∫)
 
         Tuỳ chọn:
           --display                 Display equation (mặc định: inline)
@@ -75,8 +81,36 @@ internal static class Cli
                     PrintDiagnostics(doc);
                     return doc.HasErrors ? 1 : 0;
                 }
+                case "mathml":
+                {
+                    var doc = Parse(opts);
+                    Console.WriteLine(MathMlWriter.Write(doc.Body, new MathMlOptions { Display = opts.Display, GrowLargeOperators = opts.Grow }));
+                    PrintDiagnostics(doc);
+                    return doc.HasErrors ? 1 : 0;
+                }
+                case "preview":
+                {
+                    string corpus = opts.Positional ?? throw new ArgumentException("Thiếu đường dẫn corpus .tex");
+                    var samples = Corpus.Load(corpus).Select(e =>
+                    {
+                        var d = LatexParser.Parse(e.Latex, new ParserOptions { DecimalComma = opts.DecimalComma });
+                        return new PreviewPage.Sample(e.Section, e.Latex, MathMlWriter.WriteString(d.Body, new MathMlOptions { Display = opts.Display, GrowLargeOperators = opts.Grow }));
+                    }).ToArray();
+                    string outPath = opts.Out ?? Path.ChangeExtension(Path.GetFileName(corpus), ".html");
+                    File.WriteAllText(outPath, PreviewPage.ComparePage(opts.Fonts, samples, "MathTypeX — so sánh font: " + Path.GetFileName(corpus)));
+                    Console.WriteLine($"Đã ghi {outPath}");
+                    return 0;
+                }
                 case "docx":
                     return DemoDocument.Build(opts);
+                case "fonts":
+                {
+                    var fonts = new FontScanner(FontCache.Load()).ScanMathFonts();
+                    foreach (var f in fonts)
+                        Console.WriteLine($"{f.Family,-26} {(f.IsCff ? "CFF" : "TrueType"),-8} {FontDiagnostics.DescribeIntegral(f)}\n{"",-26} {f.Path}");
+                    Console.WriteLine($"{fonts.Count} font toán.");
+                    return 0;
+                }
                 case "validate":
                 {
                     var errors = DocxBuilder.Validate(opts.Positional ?? throw new ArgumentException("Thiếu đường dẫn .docx"));

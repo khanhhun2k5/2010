@@ -10,6 +10,11 @@
     <NoWarn>$(NoWarn);WPF0001</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\MathTypeX.Editing\MathTypeX.Editing.csproj" />
+    <ProjectReference Include="..\MathTypeX.Render.MathMl\MathTypeX.Render.MathMl.csproj" />
+    <ProjectReference Include="..\MathTypeX.Fonts\MathTypeX.Fonts.csproj" />
   </ItemGroup>
 </Project>

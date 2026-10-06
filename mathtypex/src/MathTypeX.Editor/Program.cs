@@ -1,4 +1,6 @@
+using System.IO;
 using System.Windows;
+using MathTypeX.Fonts;
 
 namespace MathTypeX.Editor;
 
@@ -22,10 +24,25 @@ internal static class Program
         var window = new EditorWindow(settings);
         new EditorHost(app.Dispatcher, window).Start();
 
-        if (!server)
+        // Quét font toán ở nền (có cache) rồi cập nhật danh sách trong editor.
+        Task.Run(() =>
         {
-            app.Startup += (_, _) => window.ShowStandalone(() => app.Shutdown());
-        }
+            try
+            {
+                var fonts = new FontScanner(FontCache.Load()).ScanMathFonts();
+                app.Dispatcher.InvokeAsync(() => window.SetFonts(fonts));
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                // Không quét được thì giữ danh sách mặc định.
+            }
+        });
+
+        app.Startup += async (_, _) =>
+        {
+            if (server) await window.PrewarmAsync();
+            else window.ShowStandalone(() => app.Shutdown());
+        };
         return app.Run();
     }
 }

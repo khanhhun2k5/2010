@@ -9,5 +9,7 @@
     <ProjectReference Include="..\MathTypeX.Parser\MathTypeX.Parser.csproj" />
     <ProjectReference Include="..\MathTypeX.Render.Omml\MathTypeX.Render.Omml.csproj" />
     <ProjectReference Include="..\MathTypeX.OpenXml\MathTypeX.OpenXml.csproj" />
+    <ProjectReference Include="..\MathTypeX.Render.MathMl\MathTypeX.Render.MathMl.csproj" />
+    <ProjectReference Include="..\MathTypeX.Fonts\MathTypeX.Fonts.csproj" />
   </ItemGroup>
 </Project>

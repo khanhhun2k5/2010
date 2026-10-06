@@ -6,7 +6,8 @@
 |---|---|---|---|
 | **VS-1** | Core headless: tokenizer → parser (có error recovery) → AST → normalizer → OMML; LaTeX chuẩn hoá; CLI `mtx`; sinh `.docx` | ✅ Xong | 282 test tự động (Linux CI), OOXML hợp lệ theo OpenXmlValidator, xem thử bằng LibreOffice |
 | **VS-2** | Word COM add-in (net48, không VSTO): hook `Alt+M` cục bộ, chụp ngữ cảnh và toạ độ con trỏ; `MathTypeX.Editor.exe` (.NET 10 WPF) nổi dưới con trỏ, kiểm tra cú pháp khi gõ; chèn bằng `InsertXML` trong một mục Undo; gói cài đặt Windows | 🟡 Code xong, **chờ kiểm tra trên Word** | Compile trên Linux; 15 test cho giao thức pipe và composer; kịch bản kiểm tra: [spikes/VS2-word-checklist.md](spikes/VS2-word-checklist.md) |
-| VS-3 | Preview MathML (WebView2) + quét font OpenType MATH | ⏳ Tiếp theo | |
+| **VS-3** | Preview MathML Core trong WebView2 (vẽ cả khi đang lỗi: □ cho ô thiếu, lệnh sai tô đỏ); bộ đọc OpenType tự viết (TTC, `name`, `cmap` 4/12, `MATH`: hằng số và biến thể ∫); quét font có cache; font selector lấy từ font đã cài, tooltip mô tả ∫; `mtx fonts`, `mtx mathml`, `mtx preview` (trang so sánh font) | ✅ Phần lõi đã kiểm chứng trên Chromium headless; 🟡 WebView2 trong editor chờ kiểm tra trên Windows | 43 test MathML (gồm bất biến D9), 17 test font (font tổng hợp + Latin Modern/TeX Gyre/STIX thật); ảnh chụp Chromium |
+| VS-4 | Sửa lại công thức: OMML → AST, khoá chuẩn hoá, kho CustomXMLPart | ⏳ Tiếp theo | |
 
 ## Cài thử trên Windows
 
@@ -32,6 +33,9 @@ dotnet run --project src/MathTypeX.Cli -- omml  "\int_0^1 \frac{x^2}{1+x^2}\,dx"
 dotnet run --project src/MathTypeX.Cli -- parse "\frac{a}{b"      # → "Bạn đang thiếu dấu } để kết thúc mẫu số."
 dotnet run --project src/MathTypeX.Cli -- latex "\leq \rightarrow \frac12"
 dotnet run --project src/MathTypeX.Cli -- docx tests/corpus/integrals.tex --out out/integrals-demo.docx
+dotnet run --project src/MathTypeX.Cli -- fonts                    # font OpenType MATH đã cài + đặc điểm ∫
+dotnet run --project src/MathTypeX.Cli -- preview tests/corpus/integrals.tex --display --out out/integrals.html \
+    --fonts "Cambria Math,XITS Math,Latin Modern Math,STIX Two Math"  # mở bằng Edge/Chrome: so sánh font
 ```
 
 Mở `out/integrals-demo.docx` bằng Word. Mọi công thức trong đó là Word Equation gốc: click vào là sửa được bằng công cụ Equation của Word.
