@@ -23,7 +23,7 @@ internal static class Program
 
         var settings = UserSettings.Load();
         var window = new EditorWindow(settings);
-        new EditorHost(app.Dispatcher, window).Start();
+        new EditorHost(app.Dispatcher, window, settings).Start();
 
         // Quét font toán ở nền (có cache) rồi cập nhật danh sách trong editor.
         Task.Run(() =>

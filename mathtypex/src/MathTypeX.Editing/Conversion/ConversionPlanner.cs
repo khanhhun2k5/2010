@@ -45,7 +45,12 @@ public static class ConversionPlanner
     /// <param name="text">Text của trọn các đoạn văn chứa vùng chọn (\r hết đoạn, \a hết ô bảng).</param>
     /// <param name="windowStart">Đầu vùng chọn trong <paramref name="text"/>.</param>
     /// <param name="windowEnd">Cuối vùng chọn; chỉ công thức nằm trọn trong [windowStart, windowEnd) được chuyển.</param>
-    public static ConversionPlan Plan(string text, int windowStart, int windowEnd, ScannerOptions? options = null)
+    /// <param name="include">
+    /// Quyết định mục nào được chuyển (thay cho <see cref="MathCandidate.Recommended"/>): mục người dùng chọn trong hộp duyệt,
+    /// trừ mục bị khoá hoặc trong danh sách bỏ qua. Phải lọc ở đây, trước khi tính tách đoạn, vì cách tách một display
+    /// phụ thuộc vào công thức đứng ngay trước nó có được chuyển hay không.
+    /// </param>
+    public static ConversionPlan Plan(string text, int windowStart, int windowEnd, ScannerOptions? options = null, Func<MathCandidate, bool>? include = null)
     {
         var items = new List<ConversionItem>();
         var low = new List<MathCandidate>();
@@ -54,7 +59,11 @@ public static class ConversionPlanner
         foreach (var c in LatexScanner.Scan(text, options))
         {
             if (c.Start < windowStart || c.End > windowEnd) continue;
-            if (!c.Recommended)
+            if (include is not null)
+            {
+                if (!include(c)) continue;
+            }
+            else if (!c.Recommended)
             {
                 low.Add(c);
                 continue;
@@ -62,8 +71,7 @@ public static class ConversionPlanner
 
             var notes = new List<string>();
             string latex = NormalizeWordText(c.Latex);
-            if (c.Delimiter != MathDelimiter.Environment || c.Environment is "equation" or "equation*" or "displaymath" or "math")
-                latex = StripNumbering(latex, notes);
+            if (StripsNumbering(c)) latex = StripNumbering(latex, notes);
             latex = latex.Trim();
 
             int limit = previous?.ReplaceEnd ?? 0;
@@ -139,6 +147,68 @@ public static class ConversionPlanner
         SourceText = text.Substring(c.Start, c.Length),
         Notes = notes,
     };
+
+    /// <summary>LaTeX của một ứng viên như planner sẽ dùng (chưa tính dấu câu gộp vào display) — cho hộp duyệt và preview.</summary>
+    public static string LatexFor(MathCandidate c)
+    {
+        string latex = NormalizeWordText(c.Latex);
+        if (StripsNumbering(c)) latex = StripNumbering(latex, new List<string>());
+        return latex.Trim();
+    }
+
+    /// <summary>Công thức một dòng (không phải align/gather…): đánh số kiểu LaTeX bị bỏ.</summary>
+    private static bool StripsNumbering(MathCandidate c) =>
+        c.Delimiter != MathDelimiter.Environment || c.Environment is "equation" or "equation*" or "displaymath" or "math";
+
+    /// <summary>
+    /// Tài liệu bị sửa trong lúc người dùng duyệt: ánh xạ các mục đã chọn sang lần quét mới theo
+    /// (văn bản gốc, thứ tự xuất hiện của văn bản đó). Văn bản không đổi thì giữ nguyên vị trí.
+    /// </summary>
+    public static HashSet<int> Remap(string beforeText, IReadOnlyList<MathCandidate> before, ICollection<int> selectedStarts, string afterText, IReadOnlyList<MathCandidate> after)
+    {
+        if (beforeText == afterText) return new HashSet<int>(selectedStarts);
+        var wanted = new HashSet<(string, int)>();
+        var seen = new Dictionary<string, int>(StringComparer.Ordinal);
+        foreach (var c in before)
+        {
+            string source = beforeText.Substring(c.Start, c.Length);
+            int n = seen.TryGetValue(source, out int k) ? k : 0;
+            seen[source] = n + 1;
+            if (selectedStarts.Contains(c.Start)) wanted.Add((source, n));
+        }
+        var result = new HashSet<int>();
+        seen.Clear();
+        foreach (var c in after)
+        {
+            string source = afterText.Substring(c.Start, c.Length);
+            int n = seen.TryGetValue(source, out int k) ? k : 0;
+            seen[source] = n + 1;
+            if (wanted.Contains((source, n))) result.Add(c.Start);
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// Đoạn văn quanh công thức cho hộp duyệt: "…ta có ⟦$$E=mc^2$$⟧ nên…" — một dòng, không vượt ra ngoài đoạn văn.
+    /// </summary>
+    public static string ContextOf(string text, int start, int end, int radius = 30)
+    {
+        int ps = ParagraphStart(text, start), pe = ParagraphEnd(text, end);
+        int from = Math.Max(ps, start - radius), to = Math.Min(pe, end + radius);
+        string middle = Clean(text.Substring(start, end - start));
+        if (middle.Length > 90) middle = middle.Substring(0, 60) + " … " + middle.Substring(middle.Length - 20);
+        return (from > ps ? "…" : "") + Clean(text.Substring(from, start - from)) + "⟦" + middle + "⟧" + Clean(text.Substring(end, to - end)) + (to < pe ? "…" : "");
+    }
+
+    private static string Clean(string s)
+    {
+        var sb = new StringBuilder(s.Length);
+        foreach (char c in NormalizeWordText(s))
+        {
+            if (c >= ' ') sb.Append(c);
+        }
+        return sb.ToString();
+    }
 
     /// <summary>
     /// Sửa các ký tự mà Word tự đổi khi gõ văn bản (AutoCorrect, xuống dòng mềm…) để LaTeX trở lại như người dùng viết:

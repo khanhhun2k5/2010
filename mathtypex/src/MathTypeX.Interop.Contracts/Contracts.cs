@@ -46,6 +46,47 @@ public sealed class EditResult
     public static EditResult Cancel() => new() { Cancelled = true };
 }
 
+/// <summary>Một công thức tìm thấy khi quét cả tài liệu (VS-9), gửi sang editor để người dùng duyệt.</summary>
+[DataContract]
+public sealed class ScanItem
+{
+    [DataMember] public int Id { get; set; }
+    /// <summary>Văn bản gốc kèm delimiter, ví dụ "$x^2$".</summary>
+    [DataMember] public string Source { get; set; } = "";
+    /// <summary>LaTeX sẽ được chuyển (đã bỏ delimiter, sửa ký tự AutoCorrect, gộp dấu câu).</summary>
+    [DataMember] public string Latex { get; set; } = "";
+    [DataMember] public bool Display { get; set; }
+    [DataMember] public int Confidence { get; set; }
+    /// <summary>Được tích sẵn: đủ độ tin cậy và không bị quy tắc nào loại.</summary>
+    [DataMember] public bool Recommended { get; set; }
+    [DataMember] public string[] Reasons { get; set; } = new string[0];
+    /// <summary>Lý do không thể chuyển (đang ở vùng code, trong equation có sẵn…); có giá trị thì mục bị khoá.</summary>
+    [DataMember] public string? Blocked { get; set; }
+    /// <summary>Thân bài, chú thích, header…</summary>
+    [DataMember] public string Location { get; set; } = "";
+    /// <summary>Đoạn văn quanh công thức để người dùng nhận ra vị trí, ví dụ "…ta có ⟦$$E=mc^2$$⟧ nên…".</summary>
+    [DataMember] public string Context { get; set; } = "";
+}
+
+/// <summary>Add-in → editor: mở hộp duyệt kết quả quét tài liệu.</summary>
+[DataContract]
+public sealed class ScanRequest
+{
+    [DataMember] public string DocumentName { get; set; } = "";
+    [DataMember] public ScanItem[] Items { get; set; } = new ScanItem[0];
+    [DataMember] public string MathFont { get; set; } = "Cambria Math";
+    [DataMember] public long OwnerWindow { get; set; }
+}
+
+/// <summary>Editor → add-in: các mục được chọn để chuyển, và văn bản người dùng muốn luôn bỏ qua.</summary>
+[DataContract]
+public sealed class ScanResult
+{
+    [DataMember] public bool Cancelled { get; set; }
+    [DataMember] public int[] SelectedIds { get; set; } = new int[0];
+    [DataMember] public string[] IgnoredSources { get; set; } = new string[0];
+}
+
 /// <summary>Phong bì của mọi thông điệp trên pipe (một dòng JSON / thông điệp).</summary>
 [DataContract]
 public sealed class RpcEnvelope
@@ -60,4 +101,5 @@ public static class RpcMethods
 {
     public const string Ping = "ping";
     public const string Edit = "edit";
+    public const string Review = "review";
 }

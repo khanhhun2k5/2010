@@ -1,4 +1,4 @@
-# Kịch bản kiểm tra VS-2…VS-8 trên Windows + Word (kiêm spike S1, S3)
+# Kịch bản kiểm tra VS-2…VS-9 trên Windows + Word (kiêm spike S1, S3)
 
 > Tôi (Claude) không chạy được Word trong môi trường build. Các bước dưới đây cần anh/chị chạy trên máy Windows có Microsoft 365. Ghi kết quả vào cột cuối, gửi lại kèm file `%LOCALAPPDATA%\MathTypeX\logs\word-addin.log` nếu có lỗi.
 
@@ -78,12 +78,30 @@ Giá vé $20 và $30, biến $HOME$, còn \(\alpha+\beta\) là toán.
 | C9 | Bôi đen chữ `\frac{a}{b}` (văn bản thường) → `Alt+M` | Editor mở sẵn `\frac{a}{b}`; `Enter` thay đoạn chữ bằng equation | |
 | C10 | Bật Track Changes rồi Chuyển LaTeX | Phần thay hiện thành revision; `Ctrl+Z` vẫn một lần | |
 
+### Chuyển cả tài liệu và Trả về LaTeX (VS-9)
+
+Chuẩn bị một tài liệu có: vài đoạn chứa `$…$`/`$$…$$` ở thân bài, một footnote có `$x^2$`, header có `$\alpha$`, một hộp văn bản có `\(a+b\)`, một đoạn font Consolas có `$PATH$`, và dòng "Giá $20 và $30".
+
+| # | Thao tác | Kỳ vọng | Kết quả |
+|---|---|---|---|
+| D1 | **MathTypeX → Chuyển cả tài liệu** (`Alt`, `Y`/`MX`, `D`) | Hộp duyệt mở trước cửa sổ Word; liệt kê công thức ở Thân bài, Chú thích cuối trang, Header, Hộp văn bản; mục Consolas bị khoá (đỏ, "dùng font code"); `$20` không xuất hiện | |
+| D2 | `↑`/`↓` qua các mục | Ngữ cảnh "…ta có ⟦$$…$$⟧ nên…" và preview đổi theo; mục lỗi cú pháp hiện "Lỗi: …" | |
+| D3 | `Space` trên một mục, `Ctrl+Shift+A`, `Ctrl+A` | Tích/bỏ tích; nút "Chuyển N công thức" cập nhật số | |
+| D4 | `Del` trên một mục rồi `Enter` | Mục đó bị gạch ngang, không chuyển; lần quét sau không còn xuất hiện (`%APPDATA%\MathTypeX\settings.json` → `IgnoredSources`) | |
+| D5 | Sau khi chuyển | Mọi công thức đã chọn thành Word Equation ở đúng story; display tách đoạn như C2; `Ctrl+Z` **một lần** hoàn tác tất cả | |
+| D6 | Tài liệu dài (vài trăm công thức), giữ `Esc` giữa chừng | Dừng, thông báo "đã dừng theo yêu cầu"; phần đã chuyển vẫn hoàn tác được bằng một lần `Ctrl+Z` | |
+| D7 | Mở hộp duyệt, sửa tài liệu (thêm một dòng ở đầu), rồi `Enter` trong hộp duyệt | Vẫn chuyển đúng các công thức đã chọn | |
+| D8 | Đóng editor (Task Manager) rồi Chuyển cả tài liệu | Nếu không khởi động lại được editor: MessageBox hỏi "Chuyển N mục chắc chắn?" | |
+| D9 | Chọn một đoạn có công thức đã chuyển → **Trả về LaTeX** | Công thức thành đúng văn bản gốc (`$$E(X)=\mu.$$`); đoạn đã tách **không** tự gộp lại (giới hạn đã biết); `Ctrl+Z` một lần | |
+
 ## Câu hỏi của spike S1 / S3 cần quan sát thêm
 
 | Câu hỏi | Cách xem | Kết quả |
 |---|---|---|
 | S1: `InsertXML` có sinh thêm một đoạn trống không? | Xem nhật ký: dòng "InsertXML sinh thêm một đoạn…" (không có dòng này là tốt nhất) | |
 | S1: `Range.InsertParagraphAfter` trên Range rỗng có chèn dấu hết đoạn đúng tại vị trí đó không? | C2: chữ trước/sau display nằm đúng đoạn | |
+| S1: `InsertXML` một đoạn chữ thay cho equation (Trả về LaTeX) có xoá hẳn vùng toán không? | D9: văn bản trả về không còn nằm trong khung equation | |
+| S1: `StoryRanges` + `NextStoryRange` có lặp lại header liên kết section trước không? | D1: mỗi công thức header chỉ xuất hiện một lần | |
 | S1: Chèn trong ô bảng, footnote, header có được không? | Thử `Alt+M` ở các vị trí đó | |
 | S1: Bật Track Changes rồi chèn | Phần chèn hiện thành revision | |
 | S3: Editor có hiện đúng cạnh con trỏ trên màn hình thứ hai / màn hình DPI 150% không? | Kéo Word sang màn hình khác | |

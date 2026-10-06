@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using MathTypeX.Editing;
@@ -90,13 +92,7 @@ namespace MathTypeX.WordAddin
             _busy = true;
             try
             {
-                var report = _word.ConvertSelection(UserSettings.Load());
-                _word.SetStatus(report.Summary);
-                if (report.Found == 0 || report.LowConfidence.Count > 0 || report.Problems.Count > 0)
-                {
-                    MessageBox.Show(report.Details(), "MathTypeX", MessageBoxButtons.OK,
-                        report.Problems.Count > 0 ? MessageBoxIcon.Warning : MessageBoxIcon.Information);
-                }
+                ShowReport(_word.ConvertSelection(UserSettings.Load()));
             }
             catch (Exception ex)
             {
@@ -106,6 +102,99 @@ namespace MathTypeX.WordAddin
             finally
             {
                 _busy = false;
+            }
+        }
+
+        /// <summary>
+        /// Ribbon "Chuyển cả tài liệu" (VS-9): quét mọi story → hộp duyệt trong editor (có preview) → chuyển các mục được chọn.
+        /// Không mở được editor thì hỏi bằng MessageBox và chỉ chuyển các mục chắc chắn.
+        /// </summary>
+        public async void ConvertDocument()
+        {
+            if (_busy)
+            {
+                AddinLog.Info("Đang bận — bỏ qua Convert Document");
+                return;
+            }
+            _busy = true;
+            SynchronizationContext.SetSynchronizationContext(_ui);
+            try
+            {
+                var settings = UserSettings.Load();
+                _word.SetStatus("MathTypeX: đang quét tài liệu…");
+                var scan = _word.ScanDocument(settings);
+                _word.SetStatus("");
+                if (scan.Entries.Count == 0)
+                {
+                    MessageBox.Show(scan.IgnoredCount > 0
+                            ? $"Không có công thức LaTeX nào cần chuyển ({scan.IgnoredCount} mục nằm trong danh sách luôn bỏ qua)."
+                            : "Không thấy công thức LaTeX ($…$, $$…$$, \\(…\\), \\[…\\]) nào trong tài liệu.",
+                        "MathTypeX", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                ScanResult review;
+                try
+                {
+                    var client = await _editor.GetClientAsync();
+                    NativeMethods.AllowSetForegroundWindow(NativeMethods.ASFW_ANY);
+                    review = await client.InvokeAsync<ScanRequest, ScanResult>(RpcMethods.Review,
+                        WordGateway.ToReviewRequest(scan, settings, NativeMethods.GetForegroundWindow()));
+                }
+                catch (Exception ex) when (ex is IOException or TimeoutException or InvalidOperationException or UnauthorizedAccessException)
+                {
+                    AddinLog.Error("Review", ex);
+                    var recommended = scan.Entries.Where(e => e.Candidate.Recommended && e.Blocked is null).Select(e => e.Id).ToArray();
+                    var answer = MessageBox.Show(
+                        $"Không mở được hộp duyệt ({ex.Message}).\n\nTìm thấy {scan.Entries.Count} công thức, {recommended.Length} mục chắc chắn là công thức. Chuyển {recommended.Length} mục đó?",
+                        "MathTypeX", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    review = answer == DialogResult.Yes ? new ScanResult { SelectedIds = recommended } : new ScanResult { Cancelled = true };
+                }
+
+                if (review.Cancelled || review.SelectedIds.Length == 0) return;
+                ShowReport(_word.ApplyDocument(scan, review.SelectedIds.ToList(), settings));
+            }
+            catch (Exception ex)
+            {
+                AddinLog.Error("ConvertDocument", ex);
+                MessageBox.Show(ex.Message, "MathTypeX", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            finally
+            {
+                _busy = false;
+            }
+        }
+
+        /// <summary>Ribbon "Trả về LaTeX": equation trong vùng chọn (hoặc tại con trỏ) → văn bản LaTeX gốc.</summary>
+        public void RevertToLatex()
+        {
+            if (_busy) return;
+            _busy = true;
+            try
+            {
+                int count = _word.RevertSelection();
+                _word.SetStatus(count == 0
+                    ? "MathTypeX: không có công thức nào trong vùng chọn."
+                    : $"MathTypeX: đã trả {count} công thức về văn bản LaTeX.");
+            }
+            catch (Exception ex)
+            {
+                AddinLog.Error("RevertToLatex", ex);
+                MessageBox.Show(ex.Message, "MathTypeX", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            finally
+            {
+                _busy = false;
+            }
+        }
+
+        private void ShowReport(ConversionReport report)
+        {
+            _word.SetStatus(report.Summary);
+            if (report.NeedsAttention)
+            {
+                MessageBox.Show(report.Details(), "MathTypeX", MessageBoxButtons.OK,
+                    report.Problems.Count > 0 ? MessageBoxIcon.Warning : MessageBoxIcon.Information);
             }
         }
 

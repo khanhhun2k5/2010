@@ -84,6 +84,78 @@ public class ConversionTests
         Assert.Contains(item.Notes, n => n.Contains("dấu câu"));
     }
 
+    [Fact]
+    public void IncludePredicateDecidesBeforeParagraphSplitting()
+    {
+        const string text = "$$a$$ $$b$$ $$c$$\r";
+        // Bỏ qua b: a và c vẫn phải đứng riêng đoạn, còn "$$b$$" thành một đoạn chữ giữa hai công thức.
+        var plan = ConversionPlanner.Plan(text, 0, text.Length, include: c => c.Latex != "b");
+        string result = text;
+        foreach (var item in plan.Items.Reverse())
+        {
+            int rs = item.ReplaceStart, re = item.ReplaceEnd;
+            if (item.BreakAfter) result = result.Insert(re, "\r");
+            if (item.BreakBefore)
+            {
+                result = result.Insert(rs, "\r");
+                rs++;
+                re++;
+            }
+            result = result.Remove(rs, re - rs).Insert(rs, "[D:" + item.Latex + "]");
+        }
+        Assert.Equal("[D:a]\r$$b$$\r[D:c]\r", result);
+
+        // include cũng cho phép chuyển mục độ tin cậy thấp mà người dùng đã tích trong hộp duyệt.
+        Assert.Single(ConversionPlanner.Plan("$HOME$\r", 0, 7, include: _ => true).Items);
+    }
+
+    [Theory]
+    [InlineData("Ta có $$E=mc^2$$ nên\r", 6, 16, "Ta có ⟦$$E=mc^2$$⟧ nên")]
+    [InlineData("Đoạn trước\rabc $x$ def\rĐoạn sau\r", 15, 18, "abc ⟦$x$⟧ def")]
+    [InlineData("0123456789012345678901234567890123456789 $x$ 0123456789012345678901234567890123456789\r", 41, 44,
+        "…12345678901234567890123456789 ⟦$x$⟧ 01234567890123456789012345678…")]
+    [InlineData("a \u0013 PAGE \u0014 1\u0015 $x$\r", 14, 17, "a  PAGE  1 ⟦$x$⟧")]
+    public void ContextShowsTheSurroundingText(string text, int start, int end, string expected)
+    {
+        Assert.Equal(expected, ConversionPlanner.ContextOf(text, start, end));
+    }
+
+    [Fact]
+    public void SelectionSurvivesEditsDuringReview()
+    {
+        const string before = "$a$ và $b$ và $a$ và $c$\r";
+        var scanBefore = LatexScanner.Scan(before);
+        // Chọn $b$ và $a$ thứ hai.
+        var selected = new[] { scanBefore[1].Start, scanBefore[2].Start };
+        Assert.Equal(selected, ConversionPlanner.Remap(before, scanBefore, selected, before, scanBefore).OrderBy(x => x));
+
+        const string after = "Thêm chữ. $a$ và $b$ và $a$ và $c$\r";
+        var scanAfter = LatexScanner.Scan(after);
+        var mapped = ConversionPlanner.Remap(before, scanBefore, selected, after, scanAfter);
+        Assert.Equal(new[] { "$b$", "$a$" }, scanAfter.Where(c => mapped.Contains(c.Start)).Select(c => after.Substring(c.Start, c.Length)));
+        Assert.Equal(scanAfter[2].Start, mapped.Max());
+    }
+
+    [Fact]
+    public void LatexForMatchesWhatThePlannerConverts()
+    {
+        var c = LatexScanner.Scan("\\begin{equation} f\u2019(x)=0 \\label{a}\\end{equation}").Single();
+        Assert.Equal("f'(x)=0", ConversionPlanner.LatexFor(c));
+    }
+
+    [Fact]
+    public void IgnoreListIsBoundedAndMostRecentFirst()
+    {
+        var settings = new UserSettings();
+        settings.Ignore(new[] { "$HOME$", " $PATH$ " });
+        settings.Ignore(new[] { "$HOME$" });
+        Assert.Equal(new[] { "$HOME$", "$PATH$" }, settings.IgnoredSources);
+        Assert.True(settings.IsIgnored("$PATH$"));
+        settings.Ignore(Enumerable.Range(0, 600).Select(i => $"${i}$"));
+        Assert.Equal(UserSettings.MaxIgnoredSources, settings.IgnoredSources.Count);
+        Assert.Equal("$599$", settings.IgnoredSources[0]);
+    }
+
     [Theory]
     [InlineData("f\u2019(x)", "f'(x)")]
     [InlineData("a \u2013 b", "a - b")]

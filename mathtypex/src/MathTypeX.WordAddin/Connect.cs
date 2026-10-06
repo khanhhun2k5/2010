@@ -111,6 +111,30 @@ namespace MathTypeX.WordAddin
             }
         }
 
+        public void OnConvertDocument(object control)
+        {
+            try
+            {
+                _core?.ConvertDocument();
+            }
+            catch (Exception ex)
+            {
+                AddinLog.Error("OnConvertDocument", ex);
+            }
+        }
+
+        public void OnRevertToLatex(object control)
+        {
+            try
+            {
+                _core?.RevertToLatex();
+            }
+            catch (Exception ex)
+            {
+                AddinLog.Error("OnRevertToLatex", ex);
+            }
+        }
+
         public void OnOpenLog(object control)
         {
             try

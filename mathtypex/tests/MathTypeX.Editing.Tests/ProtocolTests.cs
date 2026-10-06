@@ -28,6 +28,39 @@ public class ProtocolTests
     }
 
     [Fact]
+    public void ScanRequestAndResultRoundTrip()
+    {
+        var request = new ScanRequest
+        {
+            DocumentName = "Bài tập chương 2.docx",
+            OwnerWindow = 0x5678,
+            Items = new[]
+            {
+                new ScanItem
+                {
+                    Id = 7, Source = "$$E(X)=\\mu.$$", Latex = "E(X)=\\mu.", Display = true, Confidence = 100, Recommended = true,
+                    Reasons = new[] { "có lệnh LaTeX" }, Location = "Thân bài", Context = "…ta có ⟦$$E(X)=\\mu.$$⟧\r nên…",
+                },
+                new ScanItem { Id = 8, Source = "$PATH$", Blocked = "dùng font code (Consolas)" },
+            },
+        };
+        string json = EditorProtocol.Serialize(request);
+        Assert.DoesNotContain('\n', json);
+        Assert.DoesNotContain('\r', json);
+        var back = EditorProtocol.Deserialize<ScanRequest>(json);
+        Assert.Equal(2, back.Items.Length);
+        Assert.Equal(request.Items[0].Context, back.Items[0].Context);
+        Assert.Equal("có lệnh LaTeX", Assert.Single(back.Items[0].Reasons));
+        Assert.Null(back.Items[0].Blocked);
+        Assert.Equal("dùng font code (Consolas)", back.Items[1].Blocked);
+
+        var result = EditorProtocol.Deserialize<ScanResult>(EditorProtocol.Serialize(new ScanResult { SelectedIds = new[] { 7 }, IgnoredSources = new[] { "$PATH$" } }));
+        Assert.False(result.Cancelled);
+        Assert.Equal(new[] { 7 }, result.SelectedIds);
+        Assert.Equal("$PATH$", Assert.Single(result.IgnoredSources));
+    }
+
+    [Fact]
     public void PipeNameIsSanitized()
     {
         Assert.Equal("MathTypeX.Editor.v1.Nguy_n_V_n_A", EditorProtocol.PipeName("Nguyễn Văn A").Replace("ễ", "_").Replace("ă", "_"));

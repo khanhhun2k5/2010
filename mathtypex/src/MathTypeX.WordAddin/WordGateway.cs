@@ -177,50 +177,45 @@ namespace MathTypeX.WordAddin
 
         /// <summary>
         /// Thay <paramref name="target"/> bằng OMML (gói Flat OPC) và trả về vị trí cuối của equation (-1 nếu không thấy).
-        /// ⚠ S1: InsertXML với một đoạn văn trọn vẹn có thể sinh thêm một dấu hết đoạn — bỏ nó đi.
         /// <paramref name="anchor"/> là một Range bất kỳ trong cùng story (main, footnote, header…) để dựng Range con.
+        /// <para>
+        /// ⚠ S1: InsertXML với một đoạn văn trọn vẹn có thể sinh thêm một dấu hết đoạn trước hoặc sau equation.
+        /// Nhận ra bằng cách so vài ký tự quanh vị trí chèn trước và sau khi chèn (không đếm đoạn của cả story — chậm
+        /// với tài liệu lớn): nếu sau equation là "\r" + đúng những gì vốn đứng sau vùng bị thay, "\r" đó là thừa.
+        /// </para>
         /// </summary>
         private static int InsertMath(dynamic anchor, dynamic target, string flatOpc, bool display)
         {
-            int start = target.Start;
-            dynamic? story = StoryOf(target);
-            int before = story is null ? -1 : (int)story.Paragraphs.Count;
+            int start = target.Start, oldEnd = target.End;
+            string after0 = TextNear(anchor, oldEnd, oldEnd + 3);
+            string before0 = TextNear(anchor, start - 3, start);
             target.InsertXML(flatOpc);
 
-            int end = FindEquationEnd(anchor, start);
-            int after = story is null ? -1 : (int)story.Paragraphs.Count;
-            if (end < 0 || before < 0 || after != before + 1) return end;
+            dynamic? om = FindEquationNear(anchor, start);
+            if (om is null) return -1;
+            int eqStart = om.Range.Start, eqEnd = om.Range.End;
 
-            if (TextAt(anchor, end, end + 1) == "\r" && (!display || TextAt(anchor, end + 1, end + 2) == "\r"))
+            if (TextNear(anchor, eqEnd, eqEnd + after0.Length + 1) == "\r" + after0)
             {
-                // Inline: dấu hết đoạn thừa ngay sau equation. Display: đoạn trống thừa ngay sau đoạn của equation.
-                RangeAt(anchor, end, end + 1).Delete();
-                AddinLog.Info("InsertXML sinh thêm một đoạn sau equation — đã bỏ");
+                RangeAt(anchor, eqEnd, eqEnd + 1).Delete();
+                AddinLog.Info($"InsertXML sinh thêm một dấu hết đoạn sau equation ({(display ? "display" : "inline")}) — đã bỏ");
             }
-            else if (display && start >= 1 && TextAt(anchor, start - 1, start) == "\r" && (start == 1 || TextAt(anchor, start - 2, start - 1) == "\r"))
+            if (eqStart > start && TextNear(anchor, eqStart - before0.Length - 1, eqStart) == before0 + "\r")
             {
-                RangeAt(anchor, start - 1, start).Delete();
-                AddinLog.Info("InsertXML sinh thêm một đoạn trống trước equation — đã bỏ");
-                end--;
+                RangeAt(anchor, eqStart - 1, eqStart).Delete();
+                AddinLog.Info($"InsertXML sinh thêm một dấu hết đoạn trước equation ({(display ? "display" : "inline")}) — đã bỏ");
+                eqEnd--;
             }
-            else
-            {
-                AddinLog.Info($"InsertXML sinh thêm một đoạn nhưng không xác định được vị trí (start={start}, end={end})");
-            }
-            return end;
+            return eqEnd;
         }
 
-        private static dynamic? StoryOf(dynamic range)
+        /// <summary>Text của [start, end) đã kẹp vào trong story (đầu/cuối story có thể ngắn hơn yêu cầu).</summary>
+        private static string TextNear(dynamic anchor, int start, int end)
         {
-            try
-            {
-                return range.Document.StoryRanges.Item((int)range.StoryType);
-            }
-            catch (Exception ex)
-            {
-                AddinLog.Error("StoryOf", ex);
-                return null;
-            }
+            int s = Math.Max(0, start);
+            if (end <= s) return "";
+            dynamic r = RangeAt(anchor, s, end);
+            return (int)r.Start == s ? (r.Text as string) ?? "" : "";
         }
 
         /// <summary>Range con [start, end) trong cùng story với <paramref name="anchor"/> (Document.Range chỉ dùng được cho main story).</summary>
@@ -231,18 +226,11 @@ namespace MathTypeX.WordAddin
             return r;
         }
 
-        private static string TextAt(dynamic anchor, int start, int end)
-        {
-            if (start < 0 || end <= start) return "";
-            dynamic r = RangeAt(anchor, start, end);
-            return (int)r.Start == start && (int)r.End == end ? (r.Text as string) ?? "" : "";
-        }
-
         private void SaveMetadata(dynamic doc, dynamic anchor, int start, EditResult result)
         {
             try
             {
-                dynamic? om = FindEquation(anchor, start);
+                dynamic? om = FindEquationNear(anchor, start);
                 if (om is null) return;
                 var element = OmmlExtractor.FirstEquation((string)om.Range.WordOpenXML);
                 if (element is null) return;
@@ -274,24 +262,19 @@ namespace MathTypeX.WordAddin
             doc.CustomXMLParts.Add(store.ToXml());
         }
 
-        private static dynamic? FindEquation(dynamic anchor, int start)
-        {
-            dynamic probe = RangeAt(anchor, start, start + 1);
-            return (int)probe.OMaths.Count > 0 ? probe.OMaths.Item(1) : null;
-        }
-
-        private static int FindEquationEnd(dynamic anchor, int start)
+        /// <summary>Equation vừa chèn tại <paramref name="start"/> (hoặc ngay sau một dấu hết đoạn thừa).</summary>
+        private static dynamic? FindEquationNear(dynamic anchor, int start)
         {
             try
             {
-                dynamic? om = FindEquation(anchor, start);
-                if (om is not null) return om.Range.End;
+                dynamic probe = RangeAt(anchor, start, start + 2);
+                return (int)probe.OMaths.Count > 0 ? probe.OMaths.Item(1) : null;
             }
             catch (Exception ex)
             {
-                AddinLog.Error("FindEquationEnd", ex);
+                AddinLog.Error("FindEquationNear", ex);
+                return null;
             }
-            return -1;
         }
     }
 }

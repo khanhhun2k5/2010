@@ -24,6 +24,22 @@ public sealed class UserSettings
     /// <summary>Ngưỡng độ tin cậy (0–100) khi chuyển LaTeX trong văn bản (docs/05 §9.4).</summary>
     [DataMember] public int ConvertMinConfidence { get; set; }
     [DataMember] public bool ConvertSingleDollar { get; set; }
+    /// <summary>Văn bản (kèm delimiter) người dùng đã chọn "luôn bỏ qua" khi chuyển LaTeX, ví dụ "$HOME$".</summary>
+    [DataMember] public List<string> IgnoredSources { get; set; } = new();
+
+    public const int MaxIgnoredSources = 500;
+
+    public bool IsIgnored(string source) => IgnoredSources.Contains(source.Trim());
+
+    public void Ignore(IEnumerable<string> sources)
+    {
+        foreach (var source in sources.Select(s => s.Trim()).Where(s => s.Length > 0))
+        {
+            IgnoredSources.Remove(source);
+            IgnoredSources.Insert(0, source);
+        }
+        if (IgnoredSources.Count > MaxIgnoredSources) IgnoredSources.RemoveRange(MaxIgnoredSources, IgnoredSources.Count - MaxIgnoredSources);
+    }
 
     private void SetDefaults()
     {
@@ -31,6 +47,7 @@ public sealed class UserSettings
         BeginnerMode = true;
         ConvertMinConfidence = 50;
         ConvertSingleDollar = true;
+        IgnoredSources = new List<string>();
     }
 
     // DataContractJsonSerializer không chạy constructor: đặt mặc định trước khi đọc để trường thiếu trong tệp cũ vẫn đúng.
@@ -52,6 +69,7 @@ public sealed class UserSettings
             var settings = new DataContractJsonSerializer(typeof(UserSettings)).ReadObject(stream) as UserSettings ?? new UserSettings();
             if (string.IsNullOrWhiteSpace(settings.MathFont)) settings.MathFont = "Cambria Math";
             settings.ConvertMinConfidence = Math.Max(0, Math.Min(100, settings.ConvertMinConfidence));
+            settings.IgnoredSources ??= new List<string>();
             return settings;
         }
         catch (Exception ex) when (ex is IOException or SerializationException or UnauthorizedAccessException or ArgumentException)

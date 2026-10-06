@@ -12,13 +12,25 @@ public static class FlatOpc
     private static readonly XNamespace Rel = "http://schemas.openxmlformats.org/package/2006/relationships";
 
     /// <summary>Đóng gói một m:oMath (inline) hoặc m:oMathPara (display) vào một đoạn văn.</summary>
-    public static string ForMath(XElement omml)
+    public static string ForMath(XElement omml) => Wrap(new XElement(omml));
+
+    /// <summary>
+    /// Đóng gói một đoạn chữ thường (lệnh "Trả về LaTeX": thay equation bằng văn bản gốc như "$$E=mc^2$$").
+    /// Không có w:rPr để chữ nhận định dạng của đoạn văn đích.
+    /// </summary>
+    public static string ForText(string text)
+    {
+        var w = OmmlWriter.W;
+        return Wrap(new XElement(w + "r", new XElement(w + "t", new XAttribute(XNamespace.Xml + "space", "preserve"), text)));
+    }
+
+    private static string Wrap(XElement paragraphContent)
     {
         var w = OmmlWriter.W;
         var document = new XElement(w + "document",
             new XAttribute(XNamespace.Xmlns + "w", w.NamespaceName),
             new XAttribute(XNamespace.Xmlns + "m", OmmlWriter.M.NamespaceName),
-            new XElement(w + "body", new XElement(w + "p", new XElement(omml))));
+            new XElement(w + "body", new XElement(w + "p", paragraphContent)));
 
         var package = new XElement(Pkg + "package",
             new XAttribute(XNamespace.Xmlns + "pkg", Pkg.NamespaceName),

@@ -34,6 +34,10 @@ namespace MathTypeX.WordAddin
         [DllImport("user32.dll")]
         public static extern short GetKeyState(int nVirtKey);
 
+        /// <summary>Trạng thái phím vật lý ngay lúc gọi (dùng để dừng thao tác dài bằng Esc).</summary>
+        [DllImport("user32.dll")]
+        public static extern short GetAsyncKeyState(int vKey);
+
         [DllImport("user32.dll")]
         public static extern IntPtr GetFocus();
 

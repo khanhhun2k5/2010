@@ -1,6 +1,7 @@
 using System.IO;
 using System.IO.Pipes;
 using System.Windows.Threading;
+using MathTypeX.Editing;
 using MathTypeX.Interop;
 
 namespace MathTypeX.Editor;
@@ -10,11 +11,13 @@ internal sealed class EditorHost
 {
     private readonly Dispatcher _dispatcher;
     private readonly EditorWindow _window;
+    private readonly UserSettings _settings;
 
-    public EditorHost(Dispatcher dispatcher, EditorWindow window)
+    public EditorHost(Dispatcher dispatcher, EditorWindow window, UserSettings settings)
     {
         _dispatcher = dispatcher;
         _window = window;
+        _settings = settings;
     }
 
     public void Start() => Task.Run(AcceptLoopAsync);
@@ -62,6 +65,12 @@ internal sealed class EditorHost
             {
                 var edit = EditorProtocol.Deserialize<EditRequest>(request.Payload ?? "{}");
                 var result = await _dispatcher.InvokeAsync(() => _window.EditAsync(edit)).Task.Unwrap().ConfigureAwait(false);
+                return new RpcEnvelope { Method = request.Method, Payload = EditorProtocol.Serialize(result) };
+            }
+            case RpcMethods.Review:
+            {
+                var scan = EditorProtocol.Deserialize<ScanRequest>(request.Payload ?? "{}");
+                var result = await _dispatcher.InvokeAsync(() => ScanWindow.ReviewAsync(scan, _settings)).Task.Unwrap().ConfigureAwait(false);
                 return new RpcEnvelope { Method = request.Method, Payload = EditorProtocol.Serialize(result) };
             }
             default:

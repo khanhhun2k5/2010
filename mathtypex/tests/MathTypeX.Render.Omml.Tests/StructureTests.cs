@@ -239,4 +239,16 @@ public class StructureTests
         Assert.Single(doc.Descendants(O.M + "oMath"));
         Assert.Contains("mso-application", pkg);
     }
+
+    [Fact]
+    public void FlatOpcForTextKeepsSpacesAndHasNoMath()
+    {
+        string pkg = FlatOpc.ForText(" $$E=mc^2$$ ");
+        var doc = XDocument.Parse(pkg);
+        var t = Assert.Single(doc.Descendants(O.W + "t"));
+        Assert.Equal(" $$E=mc^2$$ ", t.Value);
+        Assert.Equal("preserve", t.Attribute(XNamespace.Xml + "space")?.Value);
+        Assert.Empty(doc.Descendants(O.M + "oMath"));
+        Assert.Empty(doc.Descendants(O.W + "rPr"));
+    }
 }
