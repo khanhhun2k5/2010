@@ -28,7 +28,7 @@ Tự đóng gói: `pwsh tools/package.ps1 -Zip` (Windows, giống CI) hoặc `to
 |---|---|---|
 | `test-linux` | ubuntu-latest | restore → build Release → toàn bộ test → sinh tài liệu demo (`docx`, `preview`, `convert`; kiểm tra tệp khác rỗng) → artifact `mathtypex-demo-docx` |
 | `build-windows` | windows-latest | restore → build Release (add-in net48, editor WPF) → toàn bộ test trên Windows |
-| `package-windows` | windows-latest, sau hai job trên | `tools/package.ps1` (kiểm tra theo `tools/package-manifest.txt`) → `tools/smoke-test.ps1` trên Windows PowerShell 5.1/.NET Framework 4.8: nạp mọi DLL của add-in, đối chiếu callback ribbon, chạy lõi trên .NET Framework, `MathTypeX.Editor.exe --self-test`, `install.ps1` → tạo add-in qua COM ở tiến trình 64-bit và 32-bit như Word → `uninstall.ps1` gỡ sạch → artifact **MathTypeX-win-x64** |
+| `package-windows` | windows-latest, sau hai job trên | `tools/package.ps1` (kiểm tra theo `tools/package-manifest.txt`) → `tools/smoke-test.ps1` trên Windows PowerShell 5.1/.NET Framework 4.8: nạp mọi DLL của add-in, đối chiếu callback ribbon, chạy lõi trên .NET Framework, `MathTypeX.Editor.exe --self-test`, `install.ps1` → kiểm tra dữ liệu đăng ký HKCU đúng như mscoree đọc (64/32-bit) → `uninstall.ps1` gỡ sạch → vì runner chạy quyền cao (COM bỏ qua HKCU), cài thêm `install.ps1 -AllUsers` và tạo add-in qua COM thật ở tiến trình 64-bit và 32-bit như Word → gỡ sạch → artifact **MathTypeX-win-x64** |
 
 ## Build và test
 

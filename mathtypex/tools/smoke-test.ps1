@@ -34,9 +34,19 @@ function Step([string]$Name, [scriptblock]$Body) {
 }
 
 function Invoke-PowerShell([string]$Exe, [string]$Script) {
+    # Bọc script: lỗi trong tiến trình con được in đủ (kể cả HRESULT) ra stdout và thoát mã 1.
+    $wrapped = "`$ErrorActionPreference = 'Stop'`ntry {`n$Script`n} catch { 'LỖI: ' + `$_.Exception.ToString(); exit 1 }"
     # -EncodedCommand: truyền script nhiều dòng sang tiến trình con mà không vướng quy tắc dấu ngoặc của Windows.
-    $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($Script))
-    $output = & $Exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -EncodedCommand $encoded 2>&1 | Out-String
+    $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($wrapped))
+    $previous = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"  # stderr của tiến trình con không được làm dừng script ở dòng đầu tiên
+    try {
+        $output = & $Exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -EncodedCommand $encoded 2>&1 |
+            ForEach-Object { "$_" } | Out-String
+    }
+    finally {
+        $ErrorActionPreference = $previous
+    }
     if ($LASTEXITCODE -ne 0) { throw "mã thoát $LASTEXITCODE`n$output" }
     return $output.Trim()
 }
@@ -161,59 +171,100 @@ if (-not $PortableOnly) { Step "editor-self-test" {
 if (-not $SkipInstall) {
     $clsid = "{5EBC7F71-F8F9-45E5-AC8E-54FED67797E1}"
     $windowsPowerShell = Join-Path $env:WINDIR "System32\WindowsPowerShell\v1.0\powershell.exe"
+    $shells = @(@(
+        @{ Bits = "64bit"; Exe = $windowsPowerShell },
+        @{ Bits = "32bit"; Exe = (Join-Path $env:WINDIR "SysWOW64\WindowsPowerShell\v1.0\powershell.exe") }
+    ) | Where-Object { Test-Path $_.Exe })
+    # Từ Windows Vista, COM bỏ qua đăng ký per-user (HKCU) với tiến trình integrity > Medium (chạy as admin,
+    # hoặc tài khoản Administrators khi tắt UAC — như runner CI). Word bình thường chạy ở Medium.
+    $elevated = [bool](whoami /groups | Select-String -SimpleMatch "S-1-16-12288")
+    Write-Host "INFO tiến trình $(if ($elevated) { 'có quyền cao (High integrity)' } else { 'Medium integrity' })"
 
-    Step "install" {
-        & $windowsPowerShell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File (Join-Path $PackageDir "install.ps1") -PackageDir $PackageDir | Out-Host
+    function Install-Package([switch]$AllUsers) {
+        $arguments = @("-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", (Join-Path $PackageDir "install.ps1"), "-PackageDir", $PackageDir)
+        if ($AllUsers) { $arguments += "-AllUsers" }
+        & $windowsPowerShell @arguments | Out-Host
         if ($LASTEXITCODE -ne 0) { throw "install.ps1 thoát với mã $LASTEXITCODE" }
-        foreach ($view in @("Software\Classes", "Software\Classes\Wow6432Node")) {
-            $codeBase = (Get-ItemProperty "HKCU:\$view\CLSID\$clsid\InprocServer32").CodeBase
-            $dll = ([Uri]$codeBase).LocalPath
-            if (-not (Test-Path $dll)) { throw "$view : CodeBase trỏ tới tệp không tồn tại: $dll" }
-        }
-        $loadBehavior = (Get-ItemProperty "HKCU:\Software\Microsoft\Office\Word\Addins\MathTypeX.WordAddin").LoadBehavior
-        if ($loadBehavior -ne 3) { throw "LoadBehavior = $loadBehavior, cần 3" }
-        $editorPath = (Get-ItemProperty "HKCU:\Software\MathTypeX").EditorPath
-        if (-not (Test-Path $editorPath)) { throw "EditorPath không tồn tại: $editorPath" }
-        "đã cài vào $(Split-Path (Split-Path $editorPath))"
     }
 
-    # Word tạo add-in qua COM: ProgId → CLSID → mscoree.dll → CLR 4 → MathTypeX.WordAddin.Connect.
-    # Làm y như vậy trong tiến trình 64-bit (Office 64-bit) và 32-bit (Office 32-bit, qua Wow6432Node).
+    function Uninstall-Package([switch]$AllUsers) {
+        $arguments = @("-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", (Join-Path $PackageDir "uninstall.ps1"))
+        if ($AllUsers) { $arguments += "-AllUsers" }
+        & $windowsPowerShell @arguments | Out-Host
+        if ($LASTEXITCODE -ne 0) { throw "uninstall.ps1 thoát với mã $LASTEXITCODE" }
+    }
+
+    function Assert-Removed([string]$Hive, [string]$Target) {
+        $keys = @("$Hive\Classes\CLSID\$clsid", "$Hive\Classes\Wow6432Node\CLSID\$clsid", "$Hive\Classes\MathTypeX.WordAddin",
+            "$Hive\Microsoft\Office\Word\Addins\MathTypeX.WordAddin", "$Hive\MathTypeX")
+        foreach ($key in $keys) { if (Test-Path $key) { throw "còn sót khoá $key" } }
+        foreach ($dir in @("addin", "editor")) { if (Test-Path (Join-Path $Target $dir)) { throw "còn sót $Target\$dir" } }
+    }
+
+    # Làm đúng việc mscoree.dll làm khi Word tạo add-in: ProgId → CLSID → InprocServer32 (Assembly, Class, CodeBase,
+    # RuntimeVersion) → nạp assembly → tạo Connect → GetCustomUI. Chạy trong tiến trình 64-bit và 32-bit
+    # (tiến trình 32-bit tự đọc nhánh Wow6432Node như Office 32-bit).
+    $registration = @'
+$clsid = (Get-Item "Registry::HKEY_CURRENT_USER\Software\Classes\MathTypeX.WordAddin\CLSID").GetValue("")
+$key = Get-Item "Registry::HKEY_CURRENT_USER\Software\Classes\CLSID\$clsid\InprocServer32"
+if ($key.GetValue("") -ne "mscoree.dll") { throw "InprocServer32 = '$($key.GetValue(''))', cần mscoree.dll" }
+if ($key.GetValue("RuntimeVersion") -ne "v4.0.30319") { throw "RuntimeVersion = '$($key.GetValue('RuntimeVersion'))'" }
+if ($key.GetValue("ThreadingModel") -ne "Both") { throw "ThreadingModel = '$($key.GetValue('ThreadingModel'))'" }
+$path = ([Uri]$key.GetValue("CodeBase")).LocalPath
+$assembly = [Reflection.Assembly]::LoadFrom($path)
+if ($assembly.FullName -ne $key.GetValue("Assembly")) { throw "Assembly '$($key.GetValue('Assembly'))' khác '$($assembly.FullName)'" }
+$type = $assembly.GetType($key.GetValue("Class"), $true)
+if ($type.GUID.ToString("B") -ne $clsid.ToLowerInvariant()) { throw "GUID của $($type.FullName) là $($type.GUID), registry là $clsid" }
+$addin = [Activator]::CreateInstance($type)
+$xml = $addin.GetCustomUI("Microsoft.Word.Document")
+if (-not $xml -or $xml.Length -lt 100) { throw "GetCustomUI trả về rỗng" }
+"$([IntPtr]::Size * 8)-bit: đăng ký HKCU hợp lệ, nạp $($assembly.GetName().Name) từ $path, ribbon $($xml.Length) ký tự"
+'@
+    # COM thật: ProgId → CoCreateInstance → mscoree → CLR 4 → MathTypeX.WordAddin.Connect, như Word.
     $activation = @'
-$ErrorActionPreference = "Stop"
 $addin = New-Object -ComObject MathTypeX.WordAddin
 $xml = $addin.GetCustomUI("Microsoft.Word.Document")
 if (-not $xml -or $xml.Length -lt 100) { throw "GetCustomUI trả về rỗng" }
 "$([IntPtr]::Size * 8)-bit: tạo được add-in qua COM, ribbon $($xml.Length) ký tự"
 '@
-    $shells = @(
-        @{ Name = "com-64bit"; Exe = $windowsPowerShell },
-        @{ Name = "com-32bit"; Exe = (Join-Path $env:WINDIR "SysWOW64\WindowsPowerShell\v1.0\powershell.exe") }
-    )
+
+    Step "install" {
+        Install-Package
+        $editorPath = (Get-ItemProperty "HKCU:\Software\MathTypeX").EditorPath
+        if (-not (Test-Path $editorPath)) { throw "EditorPath không tồn tại: $editorPath" }
+        $loadBehavior = (Get-ItemProperty "HKCU:\Software\Microsoft\Office\Word\Addins\MathTypeX.WordAddin").LoadBehavior
+        if ($loadBehavior -ne 3) { throw "LoadBehavior = $loadBehavior, cần 3" }
+        "đã cài cho người dùng hiện tại vào $(Split-Path (Split-Path $editorPath))"
+    }
     foreach ($shell in $shells) {
-        if (-not (Test-Path $shell.Exe)) {
-            Write-Host "INFO $($shell.Name): máy không có $($shell.Exe), bỏ qua"
-            continue
-        }
         $exe = $shell.Exe
-        Step $shell.Name { Invoke-PowerShell $exe $activation }
+        Step "registration-$($shell.Bits)" { Invoke-PowerShell $exe $registration }
+        if (-not $elevated) { Step "com-$($shell.Bits)" { Invoke-PowerShell $exe $activation } }
+    }
+    Step "uninstall" {
+        Uninstall-Package
+        Assert-Removed "HKCU:\Software" (Join-Path $env:LOCALAPPDATA "MathTypeX")
+        "gỡ sạch registry và tệp chương trình"
     }
 
-    Step "uninstall" {
-        & $windowsPowerShell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File (Join-Path $PackageDir "uninstall.ps1") | Out-Host
-        if ($LASTEXITCODE -ne 0) { throw "uninstall.ps1 thoát với mã $LASTEXITCODE" }
-        foreach ($key in @(
-                "HKCU:\Software\Classes\CLSID\$clsid",
-                "HKCU:\Software\Classes\Wow6432Node\CLSID\$clsid",
-                "HKCU:\Software\Classes\MathTypeX.WordAddin",
-                "HKCU:\Software\Microsoft\Office\Word\Addins\MathTypeX.WordAddin",
-                "HKCU:\Software\MathTypeX")) {
-            if (Test-Path $key) { throw "còn sót khoá $key" }
+    if ($elevated) {
+        Write-Host "INFO tiến trình có quyền cao: COM không đọc HKCU, nên kiểm tra kích hoạt COM thật bằng bản cài -AllUsers (HKLM)"
+        Step "install-allusers" {
+            Install-Package -AllUsers
+            $codeBase = (Get-ItemProperty "HKLM:\Software\Classes\CLSID\$clsid\InprocServer32").CodeBase
+            if (-not (Test-Path ([Uri]$codeBase).LocalPath)) { throw "CodeBase không tồn tại: $codeBase" }
+            "đã cài cho mọi người dùng vào $(Split-Path (Split-Path ([Uri]$codeBase).LocalPath))"
         }
-        foreach ($dir in @("addin", "editor")) {
-            if (Test-Path (Join-Path $env:LOCALAPPDATA "MathTypeX\$dir")) { throw "còn sót thư mục $dir" }
+        foreach ($shell in $shells) {
+            $exe = $shell.Exe
+            Step "com-$($shell.Bits)-allusers" { Invoke-PowerShell $exe $activation }
         }
-        "gỡ sạch registry và tệp chương trình"
+        Step "uninstall-allusers" {
+            Uninstall-Package -AllUsers
+            Assert-Removed "HKLM:\Software" (Join-Path $env:ProgramFiles "MathTypeX")
+            if (Test-Path "HKLM:\Software\WOW6432Node\Microsoft\Office\Word\Addins\MathTypeX.WordAddin") { throw "còn sót khoá Addins WOW6432Node" }
+            "gỡ sạch bản cài cho mọi người dùng"
+        }
     }
 }
 

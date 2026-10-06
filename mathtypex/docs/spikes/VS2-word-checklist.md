@@ -5,7 +5,7 @@
 ## Cài đặt
 
 1. Tải artifact **MathTypeX-win-x64** từ GitHub Actions (workflow "MathTypeX", nhánh `claude/youthful-ritchie-g5z8e4`, job `package-windows`). Hoặc tự build: `pwsh tools/package.ps1 -Zip` (Windows) / `tools/package.sh` (Linux/WSL) → `out/MathTypeX-win-x64.zip`.
-2. Giải nén, **đóng Word**, chạy `install.cmd`.
+2. Giải nén, **đóng Word**, chạy `install.cmd`. Nếu Word chạy bằng "Run as administrator" hoặc máy tắt UAC: Windows không nạp COM add-in đăng ký theo người dùng (HKCU) vào tiến trình có quyền cao — cài bằng PowerShell "Run as administrator": `powershell -ExecutionPolicy Bypass -File install.ps1 -AllUsers`.
 3. Mở Word. Trên ribbon phải có tab **MathTypeX**.
    - Nếu không thấy tab: vào *File → Options → Add-ins → Manage: COM Add-ins → Go…* xem MathTypeX có bị tắt không, và đọc nhật ký.
 

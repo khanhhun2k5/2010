@@ -13,6 +13,10 @@ CÀI ĐẶT
      và đăng ký add-in cho người dùng hiện tại (HKCU, cho cả Office 32-bit và 64-bit).
      Nếu Windows SmartScreen cảnh báo, chọn "More info" → "Run anyway" (bản chưa ký số).
   4. Mở Word: trên ribbon có tab "MathTypeX".
+  Nếu Word chạy bằng "Run as administrator" hoặc máy tắt UAC, Windows không nạp add-in cài theo người dùng.
+  Khi đó cài cho mọi người dùng: mở PowerShell bằng "Run as administrator", vào thư mục này rồi chạy
+      powershell -ExecutionPolicy Bypass -File install.ps1 -AllUsers
+  (gỡ: uninstall.ps1 -AllUsers).
 
 DÙNG THỬ
   - Alt+M trong văn bản: mở editor ngay dưới con trỏ. Gõ \int_0^1 \frac{x^2}{1+x^2}\,dx rồi Enter

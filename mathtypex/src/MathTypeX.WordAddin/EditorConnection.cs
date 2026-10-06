@@ -63,6 +63,14 @@ namespace MathTypeX.WordAddin
                 if (key?.GetValue("EditorPath") is string fromRegistry && File.Exists(fromRegistry)) return fromRegistry;
             }
 
+            // Cài cho mọi người dùng (install.ps1 -AllUsers) ghi vào view 64-bit của HKLM; Office 32-bit phải mở thẳng view đó.
+            if (Environment.Is64BitOperatingSystem)
+            {
+                using var machine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
+                using var key = machine.OpenSubKey(@"Software\MathTypeX");
+                if (key?.GetValue("EditorPath") is string fromMachine && File.Exists(fromMachine)) return fromMachine;
+            }
+
             string sibling = Path.GetFullPath(Path.Combine(AssemblyResolver.AddinDirectory, "..", "editor", "MathTypeX.Editor.exe"));
             return File.Exists(sibling) ? sibling : null;
         }
