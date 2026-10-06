@@ -27,8 +27,10 @@ namespace MathTypeX.WordAddin
             SynchronizationContext.SetSynchronizationContext(_ui);
         }
 
+        /// <summary>Cài hook Alt+M và khởi động sẵn editor. Gọi nhiều lần cũng chỉ có tác dụng một lần.</summary>
         public void Start()
         {
+            if (_hook is not null) return;
             _hook = new KeyboardHook(() => _ui.Post(_ => OpenEditor(), null));
             _editor.Prewarm();
         }

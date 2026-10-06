@@ -29,6 +29,8 @@ namespace MathTypeX.WordAddin
             {
                 AddinLog.Info($"OnConnection mode={connectMode}");
                 _core = new AddinCore(application);
+                // Bật add-in khi Word đang chạy (COM Add-ins…): Word KHÔNG gọi OnStartupComplete, nên khởi động ngay ở đây.
+                if (connectMode == ext_ConnectMode.ext_cm_AfterStartup) _core.Start();
             }
             catch (Exception ex)
             {

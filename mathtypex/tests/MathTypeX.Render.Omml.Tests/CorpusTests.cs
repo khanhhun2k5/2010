@@ -52,9 +52,10 @@ public class CorpusTests
         string name = Path.GetFileNameWithoutExtension(file) + "-" + Slug(latex);
         string dir = Path.Combine(O.RepoRoot(), "tests", "golden", "omml");
         string path = Path.Combine(dir, name + ".xml");
-        string actual = "<!-- " + latex.Replace("--", "- -") + " -->\n"
+        // XElement.ToString() xuống dòng theo Environment.NewLine (CRLF trên Windows): golden luôn lưu LF.
+        string actual = ("<!-- " + latex.Replace("--", "- -") + " -->\n"
             + "<!-- inline -->\n" + O.X(latex).ToString() + "\n"
-            + "<!-- display -->\n" + O.X(latex, display: true).ToString() + "\n";
+            + "<!-- display -->\n" + O.X(latex, display: true).ToString() + "\n").Replace("\r\n", "\n");
 
         if (Environment.GetEnvironmentVariable("MTX_UPDATE_GOLDEN") == "1" || !File.Exists(path))
         {
