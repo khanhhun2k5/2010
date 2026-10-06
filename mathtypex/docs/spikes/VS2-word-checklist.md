@@ -1,4 +1,4 @@
-# Kịch bản kiểm tra VS-2…VS-4 trên Windows + Word (kiêm spike S1, S3)
+# Kịch bản kiểm tra VS-2…VS-7 trên Windows + Word (kiêm spike S1, S3)
 
 > Tôi (Claude) không chạy được Word trong môi trường build. Các bước dưới đây cần anh/chị chạy trên máy Windows có Microsoft 365. Ghi kết quả vào cột cuối, gửi lại kèm file `%LOCALAPPDATA%\MathTypeX\logs\word-addin.log` nếu có lỗi.
 
@@ -38,6 +38,23 @@
 | — | Copy công thức sang **tài liệu mới** trên cùng máy, `Alt+M` | Source vẫn đúng (kho cục bộ `%LOCALAPPDATA%\MathTypeX\equations.jsonl`) | |
 | — | Chèn equation bằng Word (`Alt+=`, gõ `a^2+b^2=c^2`), rồi `Alt+M` trên nó | Editor mở với LaTeX chuyển ngược `a^{2}+b^{2}=c^{2}` và dòng thông báo "chưa có source LaTeX lưu kèm" | |
 | — | Sửa trực tiếp một công thức MathTypeX bằng công cụ Equation của Word, rồi `Alt+M` | Editor hiện bản chuyển ngược của nội dung **mới** | |
+
+### Gõ nhanh: gợi ý lệnh, ô trống, Tab, Command Palette (VS-6/7)
+
+| # | Thao tác | Kỳ vọng | Kết quả |
+|---|---|---|---|
+| A1 | Trong editor gõ `\fra` | Danh sách gợi ý hiện ngay dưới `\fra`, `\frac` đứng đầu; dòng dưới danh sách có cú pháp `\frac{tử số}{mẫu số}` | |
+| A2 | `Enter` (hoặc `Tab`) | Thành `\frac{}{}`, con trỏ nằm trong ô tử số; preview hiện hai ô □; dòng trợ giúp: "Phân số · đang nhập: tử số …" | |
+| A3 | Gõ `x+1`, `Tab`, gõ `x-1`, `Tab` | Con trỏ sang mẫu số rồi ra sau `}`; dòng trợ giúp đổi theo | |
+| A4 | Xoá hết, gõ `\int` rồi chọn mẫu **Tích phân xác định** bằng `↓`, `Enter` | `Tab` đi lần lượt: cận dưới → cận trên → hàm → biến → ra ngoài (§10) | |
+| A5 | Trong ô tử số của `\frac` gõ `\sqrt` + `Enter` | Snippet lồng: `Tab` đi hết ô của `\sqrt`, `Tab` tiếp theo sang mẫu số của `\frac` | |
+| A6 | Gõ `\alpha` đầy đủ rồi `Enter` | Chèn luôn vào Word (không phải nhấn `Enter` hai lần) | |
+| A7 | Gõ `\frac{1}{}` rồi `Enter` | Không chèn, báo "Còn ô trống □ chưa điền (Ctrl+Shift+Enter để vẫn chèn)"; `Ctrl+Shift+Enter` thì chèn | |
+| A8 | `Ctrl+Shift+P`, gõ `tich phan` (không dấu) | Danh sách có các mẫu tích phân; `Enter` chèn mẫu tại vị trí con trỏ trong ô LaTeX, `Esc` đóng palette và trả focus về ô LaTeX | |
+| A9 | `Ctrl+Shift+P`, gõ `phân số` bằng UniKey/EVKey | Gõ tiếng Việt được trong ô tìm (ô LaTeX thì vẫn tắt bộ gõ) | |
+| A10 | Nhấp đúp một mục trong danh sách gợi ý | Được chèn như khi nhấn `Enter` | |
+| A11 | `F1` | Bật/tắt dòng trợ giúp người mới; lần mở sau vẫn giữ lựa chọn | |
+| A12 | `Ctrl+Z` sau khi chấp nhận gợi ý | Trả về `\fra` (Undo của ô soạn còn nguyên) | |
 
 ## Câu hỏi của spike S1 / S3 cần quan sát thêm
 

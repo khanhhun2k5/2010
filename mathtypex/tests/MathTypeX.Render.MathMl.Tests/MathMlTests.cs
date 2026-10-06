@@ -78,7 +78,9 @@ public class MathMlTests
     [Fact]
     public void PlaceholdersAreVisible()
     {
-        Assert.Single(X(@"\frac{a}{}").Descendants(N + "mrow"), r => !r.HasElements); // mẫu số rỗng
+        // Ô rỗng (mẫu số {}) cũng hiện □ để người dùng thấy còn chỗ phải điền.
+        Assert.Contains(X(@"\frac{a}{}").Descendants(N + "mi"), mi => mi.Attribute("class")?.Value == "mtx-ph");
+        Assert.Contains(X(@"\sqrt{}").Descendants(N + "mi"), mi => mi.Attribute("class")?.Value == "mtx-ph");
         Assert.Contains(X(@"\frac{a}").Descendants(N + "mi"), mi => mi.Attribute("class")?.Value == "mtx-ph");
     }
 

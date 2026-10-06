@@ -49,6 +49,12 @@ public static class MathMlWriter
 
         private static XElement E(string name, params object?[] content) => new(Ns + name, content);
 
+        /// <summary>Ô đối số: nếu trống (vừa chèn \frac{}{}) thì hiện □ để người dùng thấy chỗ cần điền.</summary>
+        private XElement Arg(MathNode? node) =>
+            _o.ShowPlaceholders && AstWalker.IsEmpty(node)
+                ? E("mi", new XAttribute("class", "mtx-ph"), new XAttribute("mathvariant", "normal"), "□")
+                : Row(node);
+
         /// <summary>Luôn trả về đúng một phần tử (mrow nếu cần) — các phần tử MathML có số con cố định.</summary>
         public XElement Row(MathNode? node)
         {
@@ -90,13 +96,13 @@ public static class MathMlWriter
             Fraction f => E("mfrac",
                 f.Kind == FractionKind.NoBar ? new XAttribute("linethickness", "0") : null,
                 f.Style == MathStyleOverride.Display ? new XAttribute("displaystyle", "true") : f.Style == MathStyleOverride.Text ? new XAttribute("displaystyle", "false") : null,
-                Row(f.Numerator), Row(f.Denominator)),
-            Radical r => r.Index is null ? E("msqrt", Row(r.Radicand)) : E("mroot", Row(r.Radicand), Row(r.Index)),
+                Arg(f.Numerator), Arg(f.Denominator)),
+            Radical r => r.Index is null ? E("msqrt", Arg(r.Radicand)) : E("mroot", Arg(r.Radicand), Arg(r.Index)),
             Scripts s => ScriptsElement(Row(s.Base), s.Sub, s.Sup, under: false),
             LargeOperator op => LargeOperatorElement(op),
             FunctionApply fn => FunctionElement(fn),
             Fenced fe => FencedElement(fe),
-            Accent a => E("mover", new XAttribute("accent", "true"), Row(a.Base),
+            Accent a => E("mover", new XAttribute("accent", "true"), Arg(a.Base),
                 E("mo", a.Stretchy ? new XAttribute("stretchy", "true") : new XAttribute("stretchy", "false"),
                     SpacingAccents.TryGetValue(a.AccentChar, out var spacing) ? spacing : a.AccentChar)),
             Bar b => b.Position == VerticalPosition.Top
@@ -205,11 +211,11 @@ public static class MathMlWriter
         private XElement ScriptsElement(XElement baseElement, MathNode? sub, MathNode? sup, bool under)
         {
             if (sub is not null && sup is not null)
-                return E(under ? "munderover" : "msubsup", baseElement, Row(sub), Row(sup));
+                return E(under ? "munderover" : "msubsup", baseElement, Arg(sub), Arg(sup));
             if (sub is not null)
-                return E(under ? "munder" : "msub", baseElement, Row(sub));
+                return E(under ? "munder" : "msub", baseElement, Arg(sub));
             if (sup is not null)
-                return E(under ? "mover" : "msup", baseElement, Row(sup));
+                return E(under ? "mover" : "msup", baseElement, Arg(sup));
             return baseElement;
         }
 

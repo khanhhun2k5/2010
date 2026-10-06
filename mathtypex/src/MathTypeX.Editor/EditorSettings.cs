@@ -11,6 +11,8 @@ internal sealed class EditorSettings
     public bool DecimalComma { get; set; }
     public bool UprightDifferential { get; set; }
     public bool GrowIntegrals { get; set; }
+    /// <summary>Beginner mode (§26): dòng trợ giúp cho biết đang nhập đối số nào của lệnh nào. F1 bật/tắt.</summary>
+    public bool BeginnerMode { get; set; } = true;
 
     private static string FilePath => Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MathTypeX", "settings.json");

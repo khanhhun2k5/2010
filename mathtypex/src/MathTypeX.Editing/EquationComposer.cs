@@ -40,7 +40,18 @@ public static class EquationComposer
     public static MathDocument Analyze(string latex, ComposeOptions options) =>
         LatexParser.Parse(StripDelimiters(latex).Latex, new ParserOptions { DecimalComma = options.DecimalComma });
 
-    public static ComposeOutcome Compose(string input, ComposeOptions options, UiLanguage language = UiLanguage.Vi)
+    /// <summary>Có ô đối số còn trống không (□ trong preview): \frac{}{}, \sqrt{}, x^{}…</summary>
+    public static bool HasEmptySlot(MathNode node) => AstWalker.Descendants(node).Any(n => n switch
+    {
+        Placeholder => true,
+        Fraction f => AstWalker.IsEmpty(f.Numerator) || AstWalker.IsEmpty(f.Denominator),
+        Radical r => AstWalker.IsEmpty(r.Radicand) || (r.Index is not null && AstWalker.IsEmpty(r.Index)),
+        Scripts s => (s.Sub is not null && AstWalker.IsEmpty(s.Sub)) || (s.Sup is not null && AstWalker.IsEmpty(s.Sup)),
+        Accent a => AstWalker.IsEmpty(a.Base),
+        _ => false,
+    });
+
+    public static ComposeOutcome Compose(string input, ComposeOptions options, UiLanguage language = UiLanguage.Vi, bool allowEmptySlots = false)
     {
         var (latex, delimiterDisplay) = StripDelimiters(input);
         bool display = delimiterDisplay ?? options.Display;
@@ -53,8 +64,10 @@ public static class EquationComposer
         if (firstError is not null)
             return new ComposeOutcome(doc, null, DiagnosticFormatter.Format(firstError, language), Array.Empty<string>());
 
-        if (AstWalker.Descendants(doc.Body).Any(n => n is Placeholder))
-            return new ComposeOutcome(doc, null, language == UiLanguage.Vi ? "Còn ô trống □ chưa điền." : "Some placeholders □ are still empty.", Array.Empty<string>());
+        if (!allowEmptySlots && HasEmptySlot(doc.Body))
+            return new ComposeOutcome(doc, null, language == UiLanguage.Vi
+                ? "Còn ô trống □ chưa điền (Ctrl+Shift+Enter để vẫn chèn)."
+                : "Some placeholders □ are still empty (Ctrl+Shift+Enter to insert anyway).", Array.Empty<string>());
 
         var omml = OmmlWriter.Write(doc, new OmmlOptions
         {

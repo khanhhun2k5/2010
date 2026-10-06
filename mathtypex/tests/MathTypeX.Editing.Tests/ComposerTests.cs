@@ -49,6 +49,18 @@ public class ComposerTests
         Assert.Equal("Bạn đang thiếu dấu } để kết thúc mẫu số.", outcome.BlockingMessage);
     }
 
+    [Theory]
+    [InlineData(@"\frac{}{}")]
+    [InlineData(@"\frac{a}{}")]
+    [InlineData(@"\sqrt{}")]
+    [InlineData(@"x^{}")]
+    [InlineData(@"\hat{}")]
+    public void EmptySlotsBlockInsertionUnlessForced(string latex)
+    {
+        Assert.Contains("ô trống", EquationComposer.Compose(latex, new ComposeOptions()).BlockingMessage);
+        Assert.NotNull(EquationComposer.Compose(latex, new ComposeOptions(), allowEmptySlots: true).Result);
+    }
+
     [Fact]
     public void EmptyInputIsBlocked()
     {
