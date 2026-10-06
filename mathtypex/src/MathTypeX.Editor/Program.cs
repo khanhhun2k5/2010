@@ -9,11 +9,14 @@ internal static class Program
 {
     /// <summary>
     /// <c>--server</c>: chạy nền chờ add-in gọi (mặc định khi Word khởi động editor).
+    /// <c>--self-test [báo-cáo.txt]</c>: kiểm tra bản cài không cần giao diện (CI, chẩn đoán).
     /// Không tham số: mở editor ở chế độ thử độc lập.
     /// </summary>
     [STAThread]
     public static int Main(string[] args)
     {
+        if (args.Length > 0 && args[0] == "--self-test") return SelfTest.Run(args.Length > 1 ? args[1] : null);
+
         bool server = args.Contains("--server");
         using var mutex = new Mutex(true, @"Local\MathTypeX.Editor.v1", out bool firstInstance);
         if (!firstInstance) return 0;

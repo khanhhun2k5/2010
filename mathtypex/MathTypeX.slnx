@@ -16,6 +16,7 @@
     <Project Path="src/MathTypeX.WordAddin/MathTypeX.WordAddin.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/MathTypeX.Cli.Tests/MathTypeX.Cli.Tests.csproj" />
     <Project Path="tests/MathTypeX.Documents.Tests/MathTypeX.Documents.Tests.csproj" />
     <Project Path="tests/MathTypeX.Editing.Tests/MathTypeX.Editing.Tests.csproj" />
     <Project Path="tests/MathTypeX.Fonts.Tests/MathTypeX.Fonts.Tests.csproj" />

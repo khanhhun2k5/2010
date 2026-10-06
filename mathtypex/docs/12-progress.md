@@ -15,7 +15,20 @@
 
 ## Cài thử trên Windows
 
-Tải artifact **MathTypeX-win-x64** của workflow CI (hoặc chạy `tools/package.sh`), giải nén, đóng Word, chạy `install.cmd`. Chi tiết và các bước kiểm tra: [spikes/VS2-word-checklist.md](spikes/VS2-word-checklist.md).
+1. Mở tab **Actions** của repo → workflow **MathTypeX** → lần chạy mới nhất có dấu ✅ → mục *Artifacts* → tải **MathTypeX-win-x64** (một tệp .zip).
+2. Giải nén ra một thư mục cố định, **đóng Word**, nhấp đúp `install.cmd` (không cần quyền admin). Đọc `README.txt` trong gói nếu cần.
+3. Mở Word → tab **MathTypeX** → `Alt+M`. Kịch bản kiểm tra đầy đủ: [spikes/VS2-word-checklist.md](spikes/VS2-word-checklist.md).
+4. Kiểm tra nhanh không cần Word: `editor\MathTypeX.Editor.exe --self-test "%TEMP%\mtx.txt"` → báo cáo kết thúc bằng `RESULT PASS`.
+
+Tự đóng gói: `pwsh tools/package.ps1 -Zip` (Windows, giống CI) hoặc `tools/package.sh` (Linux/WSL) → `out/package/` và `out/MathTypeX-win-x64.zip`.
+
+### CI (`.github/workflows/mathtypex.yml`)
+
+| Job | Runner | Việc |
+|---|---|---|
+| `test-linux` | ubuntu-latest | restore → build Release → toàn bộ test → sinh tài liệu demo (`docx`, `preview`, `convert`; kiểm tra tệp khác rỗng) → artifact `mathtypex-demo-docx` |
+| `build-windows` | windows-latest | restore → build Release (add-in net48, editor WPF) → toàn bộ test trên Windows |
+| `package-windows` | windows-latest, sau hai job trên | `tools/package.ps1` (kiểm tra theo `tools/package-manifest.txt`) → `tools/smoke-test.ps1` trên Windows PowerShell 5.1/.NET Framework 4.8: nạp mọi DLL của add-in, đối chiếu callback ribbon, chạy lõi trên .NET Framework, `MathTypeX.Editor.exe --self-test`, `install.ps1` → tạo add-in qua COM ở tiến trình 64-bit và 32-bit như Word → `uninstall.ps1` gỡ sạch → artifact **MathTypeX-win-x64** |
 
 ## Build và test
 

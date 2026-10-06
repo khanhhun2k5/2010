@@ -4,7 +4,7 @@
 
 ## Cài đặt
 
-1. Tải artifact **MathTypeX-win-x64** từ GitHub Actions (workflow "MathTypeX", nhánh `claude/youthful-ritchie-g5z8e4`). Hoặc tự build: chạy `tools/package.sh` (Linux/WSL) để có `out/MathTypeX-win-x64.zip`.
+1. Tải artifact **MathTypeX-win-x64** từ GitHub Actions (workflow "MathTypeX", nhánh `claude/youthful-ritchie-g5z8e4`, job `package-windows`). Hoặc tự build: `pwsh tools/package.ps1 -Zip` (Windows) / `tools/package.sh` (Linux/WSL) → `out/MathTypeX-win-x64.zip`.
 2. Giải nén, **đóng Word**, chạy `install.cmd`.
 3. Mở Word. Trên ribbon phải có tab **MathTypeX**.
    - Nếu không thấy tab: vào *File → Options → Add-ins → Manage: COM Add-ins → Go…* xem MathTypeX có bị tắt không, và đọc nhật ký.

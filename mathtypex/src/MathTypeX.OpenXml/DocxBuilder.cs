@@ -68,8 +68,11 @@ public sealed class DocxBuilder
 
     private static string Outer(XElement element) => element.ToString(SaveOptions.DisableFormatting);
 
+    /// <summary>Ghi tài liệu; tự tạo thư mục cha còn thiếu (người gọi không phải tạo trước).</summary>
     public void Save(string path, string? documentMathFont = null)
     {
+        string? directory = Path.GetDirectoryName(Path.GetFullPath(path));
+        if (!string.IsNullOrEmpty(directory)) Directory.CreateDirectory(directory);
         using var doc = WordprocessingDocument.Create(path, WordprocessingDocumentType.Document);
         var main = doc.AddMainDocumentPart();
         main.Document = new Document(new Body(_blocks.Select(b => b.CloneNode(true))));

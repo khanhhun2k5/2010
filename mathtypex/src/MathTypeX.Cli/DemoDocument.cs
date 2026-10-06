@@ -14,8 +14,8 @@ internal static class DemoDocument
 {
     public static int Build(Options opts)
     {
-        string corpusPath = opts.Positional ?? throw new ArgumentException("Thiếu đường dẫn corpus .tex");
-        string outPath = opts.Out ?? Path.ChangeExtension(Path.GetFileName(corpusPath), ".docx");
+        string corpusPath = CliFiles.RequireInput(opts.Positional, "corpus .tex");
+        string outPath = CliFiles.PrepareOutput(opts.Out ?? Path.ChangeExtension(Path.GetFileName(corpusPath), ".docx"));
         var entries = Corpus.Load(corpusPath);
 
         var b = new DocxBuilder();
@@ -91,6 +91,7 @@ internal static class DemoDocument
         }
 
         b.Save(outPath);
+        CliFiles.EnsureWritten(outPath);
         var errors = DocxBuilder.Validate(outPath);
         Console.WriteLine($"Đã ghi {outPath} ({entries.Count} công thức, {problems} chẩn đoán).");
         foreach (var e in errors) Console.Error.WriteLine("OOXML: " + e);

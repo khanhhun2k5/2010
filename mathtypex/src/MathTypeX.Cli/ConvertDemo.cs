@@ -28,8 +28,8 @@ internal static class ConvertDemo
 
     public static int Convert(Options opts)
     {
-        string input = opts.Positional ?? throw new ArgumentException("Thiếu tệp văn bản");
-        string outPath = opts.Out ?? Path.ChangeExtension(input, ".docx");
+        string input = CliFiles.RequireInput(opts.Positional, "tệp văn bản");
+        string outPath = CliFiles.PrepareOutput(opts.Out ?? Path.ChangeExtension(input, ".docx"));
         // Văn bản kiểu Word: mỗi đoạn kết thúc bằng \r.
         string text = string.Join("\r", File.ReadAllText(input).Replace("\r\n", "\n").TrimEnd('\n').Split('\n')) + "\r";
         var plan = ConversionPlanner.Plan(text, 0, text.Length);
@@ -99,8 +99,8 @@ internal static class ConvertDemo
         foreach (var low in plan.LowConfidence)
             Console.WriteLine($"· bỏ qua {text.Substring(low.Start, low.Length)} — tin cậy {low.Confidence}: {string.Join(", ", low.Reasons)}");
 
-        Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(outPath))!);
         builder.Save(outPath, opts.Font);
+        CliFiles.EnsureWritten(outPath);
         var errors = DocxBuilder.Validate(outPath);
         foreach (var e in errors) Console.WriteLine(e);
         Console.WriteLine($"Đã chuyển {converted} công thức → {outPath} ({(errors.Count == 0 ? "OOXML hợp lệ" : errors.Count + " lỗi schema")})");

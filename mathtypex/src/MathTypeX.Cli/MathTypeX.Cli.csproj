@@ -13,4 +13,8 @@
     <ProjectReference Include="..\MathTypeX.Fonts\MathTypeX.Fonts.csproj" />
     <ProjectReference Include="..\MathTypeX.Editing\MathTypeX.Editing.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <!-- Test hồi quy gọi thẳng Cli.Run trong tiến trình (tests/MathTypeX.Cli.Tests). -->
+    <InternalsVisibleTo Include="MathTypeX.Cli.Tests" />
+  </ItemGroup>
 </Project>

@@ -93,14 +93,15 @@ internal static class Cli
                 }
                 case "preview":
                 {
-                    string corpus = opts.Positional ?? throw new ArgumentException("Thiếu đường dẫn corpus .tex");
+                    string corpus = CliFiles.RequireInput(opts.Positional, "corpus .tex");
                     var samples = Corpus.Load(corpus).Select(e =>
                     {
                         var d = LatexParser.Parse(e.Latex, new ParserOptions { DecimalComma = opts.DecimalComma });
                         return new PreviewPage.Sample(e.Section, e.Latex, MathMlWriter.WriteString(d.Body, new MathMlOptions { Display = opts.Display, GrowLargeOperators = opts.Grow }));
                     }).ToArray();
-                    string outPath = opts.Out ?? Path.ChangeExtension(Path.GetFileName(corpus), ".html");
+                    string outPath = CliFiles.PrepareOutput(opts.Out ?? Path.ChangeExtension(Path.GetFileName(corpus), ".html"));
                     File.WriteAllText(outPath, PreviewPage.ComparePage(opts.Fonts, samples, "MathTypeX — so sánh font: " + Path.GetFileName(corpus)));
+                    CliFiles.EnsureWritten(outPath);
                     Console.WriteLine($"Đã ghi {outPath}");
                     return 0;
                 }
@@ -120,7 +121,7 @@ internal static class Cli
                 }
                 case "validate":
                 {
-                    var errors = DocxBuilder.Validate(opts.Positional ?? throw new ArgumentException("Thiếu đường dẫn .docx"));
+                    var errors = DocxBuilder.Validate(CliFiles.RequireInput(opts.Positional, "tệp .docx"));
                     foreach (var e in errors) Console.WriteLine(e);
                     Console.WriteLine(errors.Count == 0 ? "Hợp lệ." : $"{errors.Count} lỗi.");
                     return errors.Count == 0 ? 0 : 1;
@@ -131,7 +132,10 @@ internal static class Cli
                     return 2;
             }
         }
-        catch (Exception ex) when (ex is ArgumentException or IOException)
+        // Lỗi do người dùng/môi trường (thiếu tệp, không ghi được, tệp .docx hỏng) → thông báo một dòng, mã thoát 2.
+        // FileFormatException (tệp không phải gói OPC/zip) là một FormatException.
+        catch (Exception ex) when (ex is ArgumentException or IOException or UnauthorizedAccessException or FormatException
+                                   or DocumentFormat.OpenXml.Packaging.OpenXmlPackageException or InvalidDataException)
         {
             Console.Error.WriteLine("Lỗi: " + ex.Message);
             return 2;

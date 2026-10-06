@@ -5,39 +5,111 @@ on:
     paths: [ "mathtypex/**", ".github/workflows/mathtypex.yml" ]
   pull_request:
     paths: [ "mathtypex/**", ".github/workflows/mathtypex.yml" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_NOLOGO: "1"
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "1"
 
 jobs:
-  build-test:
+  # Phần portable (parser, OMML, MathML, font, scanner, planner, CLI): build + test + tài liệu demo trên Linux.
+  # Add-in Word (net48) và editor WPF vẫn được biên dịch ở đây (EnableWindowsTargeting) nhưng chỉ chạy trên Windows.
+  test-linux:
+    name: test-linux (restore, build, test, demo)
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     defaults:
       run:
         working-directory: mathtypex
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
       - name: Cài font OpenType MATH (cho test bộ đọc font)
         run: sudo apt-get update && sudo apt-get install -y --no-install-recommends fonts-texgyre-math fonts-lmodern
-      - name: Build
-        run: dotnet build MathTypeX.slnx -c Release
-      - name: Test
+      - name: Restore
+        run: dotnet restore MathTypeX.slnx
+      - name: Build (Release)
+        run: dotnet build MathTypeX.slnx -c Release --no-restore
+      - name: Test (Release)
         run: dotnet test --solution MathTypeX.slnx -c Release --no-build
       - name: Sinh tài liệu demo
         run: |
-          dotnet run --project src/MathTypeX.Cli -c Release --no-build -- docx tests/corpus/integrals.tex --out out/integrals-demo.docx
-          dotnet run --project src/MathTypeX.Cli -c Release --no-build -- docx tests/corpus/typography.tex --out out/typography-demo.docx --sizing TeX
-          dotnet run --project src/MathTypeX.Cli -c Release --no-build -- preview tests/corpus/integrals.tex --display --out out/integrals-preview.html --fonts "Latin Modern Math,TeX Gyre Termes Math,TeX Gyre Pagella Math"
-          dotnet run --project src/MathTypeX.Cli -c Release --no-build -- convert tests/corpus/convert-sample.txt --out out/convert-demo.docx
-      - uses: actions/upload-artifact@v4
+          set -euo pipefail
+          # CLI tự tạo thư mục cho --out; tạo sẵn ở đây chỉ là lớp bảo vệ thứ hai.
+          mkdir -p out
+          mtx() { dotnet run --project src/MathTypeX.Cli -c Release --no-build -- "$@"; }
+          mtx docx tests/corpus/integrals.tex --out out/integrals-demo.docx
+          mtx docx tests/corpus/typography.tex --out out/typography-demo.docx --sizing TeX
+          mtx preview tests/corpus/integrals.tex --display --out out/integrals-preview.html --fonts "Latin Modern Math,TeX Gyre Termes Math,TeX Gyre Pagella Math"
+          mtx convert tests/corpus/convert-sample.txt --out out/convert-demo.docx
+          for f in out/integrals-demo.docx out/typography-demo.docx out/integrals-preview.html out/convert-demo.docx; do
+            if [ ! -s "$f" ]; then echo "::error::Thiếu hoặc rỗng: $f"; exit 1; fi
+            ls -l "$f"
+          done
+          mtx validate out/convert-demo.docx
+      - uses: actions/upload-artifact@v7
         with:
           name: mathtypex-demo-docx
           path: |
             mathtypex/out/*.docx
             mathtypex/out/*.html
-      - name: Đóng gói bản Windows (add-in + editor)
-        run: tools/package.sh
-      - uses: actions/upload-artifact@v4
+          if-no-files-found: error
+
+  # Build + test trên đúng hệ điều hành mà add-in và editor chạy (CRLF, đường dẫn, font Windows, .NET Framework).
+  build-windows:
+    name: build-windows (build, test trên Windows)
+    runs-on: windows-latest
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: mathtypex
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+      - name: Restore
+        run: dotnet restore MathTypeX.slnx
+      - name: Build (Release)
+        run: dotnet build MathTypeX.slnx -c Release --no-restore
+      - name: Test (Release)
+        run: dotnet test --solution MathTypeX.slnx -c Release --no-build
+
+  # Gói tải về để thử trên Word: chỉ đóng gói khi test trên cả Linux và Windows đều đạt,
+  # rồi kiểm tra chính gói đó (nạp add-in trên .NET Framework, đăng ký COM 64/32-bit, editor --self-test).
+  package-windows:
+    name: package-windows (MathTypeX-win-x64)
+    needs: [ test-linux, build-windows ]
+    runs-on: windows-latest
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: mathtypex
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+      - name: Đóng gói (add-in net48 + editor self-contained win-x64)
+        shell: pwsh
+        run: ./tools/package.ps1
+      - name: Smoke test gói (Windows PowerShell 5.1 = .NET Framework 4.8 như Word)
+        shell: powershell
+        run: ./tools/smoke-test.ps1 -PackageDir out/package
+      - uses: actions/upload-artifact@v7
         with:
           name: MathTypeX-win-x64
-          path: mathtypex/out/MathTypeX-win-x64.zip
+          path: mathtypex/out/package/
+          if-no-files-found: error
+          retention-days: 30
