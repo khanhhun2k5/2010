@@ -1,0 +1,9 @@
+Chuyển LaTeX trong văn bản — mẫu kiểm tra (VS-8)
+Cho hàm số $f(x)=\frac{x^2}{1+x^2}$ xác định trên $\mathbb{R}$. Với $X\sim N(\mu,\sigma^2)$, ta có $$E(X)=\mu.$$
+Tích phân \(\int_0^1 f(x)\,dx\) được tính như sau:
+\[ \int_0^1 \frac{x^2}{1+x^2}\,dx = 1-\frac{\pi}{4} \]
+Hệ phương trình $$\begin{cases} x+y=2 \\ x-y=0 \end{cases}$$, suy ra $x=y=1$.
+\begin{align*} (a+b)^2 &= a^2+2ab+b^2 \\ (a-b)^2 &= a^2-2ab+b^2 \end{align*}
+\begin{equation}\lim_{x\to 0}\frac{\sin x}{x}=1\label{eq:lim}\end{equation}
+Không phải công thức: giá vé $20 và $30, biến môi trường $HOME$, đường dẫn $C:\Users\a$, và \$5 đã escape.
+Tổng $\sum_{k=1}^{n} k=\frac{n(n+1)}{2}$ và ma trận $\begin{pmatrix}1&2\\3&4\end{pmatrix}$.

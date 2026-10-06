@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui">
+  <ribbon>
+    <tabs>
+      <tab id="MathTypeXTab" label="MathTypeX" keytip="MX">
+        <group id="MathTypeXEquation" label="Công thức">
+          <button id="MathTypeXInsert" label="Chèn công thức" screentip="Chèn / sửa công thức LaTeX (Alt+M)"
+                  supertip="Mở editor tại con trỏ. Gõ LaTeX, nhấn Enter để chèn Word Equation gốc."
+                  imageMso="EquationInsertGallery" size="large" onAction="OnInsertEquation" keytip="M" />
+          <button id="MathTypeXConvert" label="Chuyển LaTeX" screentip="Chuyển LaTeX trong vùng chọn thành Word Equation"
+                  supertip="Tìm $…$, $$…$$, \(…\), \[…\], equation*, align* trong vùng chọn (không chọn gì: đoạn chứa con trỏ) và thay bằng Word Equation gốc. Một lần Ctrl+Z hoàn tác tất cả."
+                  imageMso="ReplaceDialog" size="large" onAction="OnConvertSelection" keytip="C" />
+          <button id="MathTypeXConvertDocument" label="Chuyển cả tài liệu" screentip="Quét cả tài liệu và chuyển LaTeX thành Word Equation"
+                  supertip="Quét thân bài, chú thích, header/footer, hộp văn bản; mở hộp duyệt (có xem trước) để chọn công thức cần chuyển. Giữ Esc để dừng. Một lần Ctrl+Z hoàn tác tất cả."
+                  imageMso="Spelling" size="large" onAction="OnConvertDocument" keytip="D" />
+          <button id="MathTypeXRevert" label="Trả về LaTeX" screentip="Thay công thức đang chọn bằng văn bản LaTeX gốc"
+                  supertip="Công thức tạo bằng Chuyển LaTeX được trả lại đúng văn bản cũ ($…$, $$…$$…); công thức khác thành $…$ hoặc $$…$$."
+                  imageMso="Undo" size="normal" onAction="OnRevertToLatex" keytip="R" />
+        </group>
+        <group id="MathTypeXHelp" label="Hỗ trợ">
+          <button id="MathTypeXLog" label="Nhật ký" imageMso="FileDocumentInspect" onAction="OnOpenLog" keytip="L" />
+        </group>
+      </tab>
+    </tabs>
+  </ribbon>
+</customUI>

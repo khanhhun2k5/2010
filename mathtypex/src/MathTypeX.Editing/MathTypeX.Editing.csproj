@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Logic của editor không phụ thuộc UI (test được trên Linux). -->
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net10.0</TargetFrameworks>
+    <RootNamespace>MathTypeX.Editing</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MathTypeX.Parser\MathTypeX.Parser.csproj" />
+    <ProjectReference Include="..\MathTypeX.Render.Omml\MathTypeX.Render.Omml.csproj" />
+    <ProjectReference Include="..\MathTypeX.Interop.Contracts\MathTypeX.Interop.Contracts.csproj" />
+    <ProjectReference Include="..\MathTypeX.Scanner\MathTypeX.Scanner.csproj" />
+  </ItemGroup>
+</Project>

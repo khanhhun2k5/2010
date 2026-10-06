@@ -1,0 +1,234 @@
+<!-- \begin{aligned} f(x) &=x^2+2x+1\\ &=(x+1)^2 \end{aligned} -->
+<!-- inline -->
+<m:oMath xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <m:m>
+    <m:mPr>
+      <m:plcHide m:val="1" />
+      <m:cGpRule m:val="3" />
+      <m:cGp m:val="0" />
+      <m:mcs>
+        <m:mc>
+          <m:mcPr>
+            <m:count m:val="1" />
+            <m:mcJc m:val="right" />
+          </m:mcPr>
+        </m:mc>
+        <m:mc>
+          <m:mcPr>
+            <m:count m:val="1" />
+            <m:mcJc m:val="left" />
+          </m:mcPr>
+        </m:mc>
+      </m:mcs>
+      <m:ctrlPr>
+        <w:rPr>
+          <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+        </w:rPr>
+      </m:ctrlPr>
+    </m:mPr>
+    <m:mr>
+      <m:e>
+        <m:r>
+          <w:rPr>
+            <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+          </w:rPr>
+          <m:t xml:space="preserve">f(x)</m:t>
+        </m:r>
+      </m:e>
+      <m:e>
+        <m:r>
+          <w:rPr>
+            <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+          </w:rPr>
+          <m:t xml:space="preserve">=</m:t>
+        </m:r>
+        <m:sSup>
+          <m:sSupPr>
+            <m:ctrlPr>
+              <w:rPr>
+                <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+              </w:rPr>
+            </m:ctrlPr>
+          </m:sSupPr>
+          <m:e>
+            <m:r>
+              <w:rPr>
+                <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+              </w:rPr>
+              <m:t xml:space="preserve">x</m:t>
+            </m:r>
+          </m:e>
+          <m:sup>
+            <m:r>
+              <w:rPr>
+                <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+              </w:rPr>
+              <m:t xml:space="preserve">2</m:t>
+            </m:r>
+          </m:sup>
+        </m:sSup>
+        <m:r>
+          <w:rPr>
+            <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+          </w:rPr>
+          <m:t xml:space="preserve">+2x+1</m:t>
+        </m:r>
+      </m:e>
+    </m:mr>
+    <m:mr>
+      <m:e />
+      <m:e>
+        <m:r>
+          <w:rPr>
+            <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+          </w:rPr>
+          <m:t xml:space="preserve">=(x+1</m:t>
+        </m:r>
+        <m:sSup>
+          <m:sSupPr>
+            <m:ctrlPr>
+              <w:rPr>
+                <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+              </w:rPr>
+            </m:ctrlPr>
+          </m:sSupPr>
+          <m:e>
+            <m:r>
+              <w:rPr>
+                <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+              </w:rPr>
+              <m:t xml:space="preserve">)</m:t>
+            </m:r>
+          </m:e>
+          <m:sup>
+            <m:r>
+              <w:rPr>
+                <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+              </w:rPr>
+              <m:t xml:space="preserve">2</m:t>
+            </m:r>
+          </m:sup>
+        </m:sSup>
+      </m:e>
+    </m:mr>
+  </m:m>
+</m:oMath>
+<!-- display -->
+<m:oMathPara xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <m:oMathParaPr>
+    <m:jc m:val="centerGroup" />
+  </m:oMathParaPr>
+  <m:oMath>
+    <m:m>
+      <m:mPr>
+        <m:plcHide m:val="1" />
+        <m:cGpRule m:val="3" />
+        <m:cGp m:val="0" />
+        <m:mcs>
+          <m:mc>
+            <m:mcPr>
+              <m:count m:val="1" />
+              <m:mcJc m:val="right" />
+            </m:mcPr>
+          </m:mc>
+          <m:mc>
+            <m:mcPr>
+              <m:count m:val="1" />
+              <m:mcJc m:val="left" />
+            </m:mcPr>
+          </m:mc>
+        </m:mcs>
+        <m:ctrlPr>
+          <w:rPr>
+            <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+          </w:rPr>
+        </m:ctrlPr>
+      </m:mPr>
+      <m:mr>
+        <m:e>
+          <m:r>
+            <w:rPr>
+              <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+            </w:rPr>
+            <m:t xml:space="preserve">f(x)</m:t>
+          </m:r>
+        </m:e>
+        <m:e>
+          <m:r>
+            <w:rPr>
+              <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+            </w:rPr>
+            <m:t xml:space="preserve">=</m:t>
+          </m:r>
+          <m:sSup>
+            <m:sSupPr>
+              <m:ctrlPr>
+                <w:rPr>
+                  <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                </w:rPr>
+              </m:ctrlPr>
+            </m:sSupPr>
+            <m:e>
+              <m:r>
+                <w:rPr>
+                  <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                </w:rPr>
+                <m:t xml:space="preserve">x</m:t>
+              </m:r>
+            </m:e>
+            <m:sup>
+              <m:r>
+                <w:rPr>
+                  <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                </w:rPr>
+                <m:t xml:space="preserve">2</m:t>
+              </m:r>
+            </m:sup>
+          </m:sSup>
+          <m:r>
+            <w:rPr>
+              <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+            </w:rPr>
+            <m:t xml:space="preserve">+2x+1</m:t>
+          </m:r>
+        </m:e>
+      </m:mr>
+      <m:mr>
+        <m:e />
+        <m:e>
+          <m:r>
+            <w:rPr>
+              <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+            </w:rPr>
+            <m:t xml:space="preserve">=(x+1</m:t>
+          </m:r>
+          <m:sSup>
+            <m:sSupPr>
+              <m:ctrlPr>
+                <w:rPr>
+                  <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                </w:rPr>
+              </m:ctrlPr>
+            </m:sSupPr>
+            <m:e>
+              <m:r>
+                <w:rPr>
+                  <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                </w:rPr>
+                <m:t xml:space="preserve">)</m:t>
+              </m:r>
+            </m:e>
+            <m:sup>
+              <m:r>
+                <w:rPr>
+                  <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math" w:cs="Cambria Math" />
+                </w:rPr>
+                <m:t xml:space="preserve">2</m:t>
+              </m:r>
+            </m:sup>
+          </m:sSup>
+        </m:e>
+      </m:mr>
+    </m:m>
+  </m:oMath>
+</m:oMathPara>

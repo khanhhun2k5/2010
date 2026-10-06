@@ -1,0 +1,18 @@
+# Các tệp bắt buộc trong gói MathTypeX-win-x64 (đường dẫn tương đối, mỗi dòng một tệp).
+# tools/package.sh và tools/package.ps1 đều kiểm tra danh sách này; thiếu hoặc rỗng là lỗi.
+README.txt
+LICENSE
+install.cmd
+install.ps1
+uninstall.cmd
+uninstall.ps1
+addin/MathTypeX.WordAddin.dll
+addin/MathTypeX.Interop.Contracts.dll
+addin/MathTypeX.Documents.dll
+addin/MathTypeX.Editing.dll
+addin/MathTypeX.Scanner.dll
+addin/MathTypeX.Parser.dll
+addin/MathTypeX.Render.Omml.dll
+addin/MathTypeX.Ast.dll
+addin/MathTypeX.Core.dll
+editor/MathTypeX.Editor.exe
