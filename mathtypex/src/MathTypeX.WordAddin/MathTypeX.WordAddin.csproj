@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    COM add-in cho Word (docs/adr/0002): .NET Framework 4.8, không VSTO, không NuGet lúc chạy.
+    Đăng ký per-user bằng tools/install-dev.ps1.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>MathTypeX.WordAddin</AssemblyName>
+    <RootNamespace>MathTypeX.WordAddin</RootNamespace>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <ComVisible>false</ComVisible>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="all" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MathTypeX.Interop.Contracts\MathTypeX.Interop.Contracts.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Ribbon.xml" LogicalName="MathTypeX.WordAddin.Ribbon.xml" />
+  </ItemGroup>
+</Project>

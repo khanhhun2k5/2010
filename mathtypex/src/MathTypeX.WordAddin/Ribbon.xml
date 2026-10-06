@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui">
+  <ribbon>
+    <tabs>
+      <tab id="MathTypeXTab" label="MathTypeX">
+        <group id="MathTypeXEquation" label="Công thức">
+          <button id="MathTypeXInsert" label="Chèn công thức" screentip="Chèn / sửa công thức LaTeX (Alt+M)"
+                  supertip="Mở editor tại con trỏ. Gõ LaTeX, nhấn Enter để chèn Word Equation gốc."
+                  imageMso="EquationInsertGallery" size="large" onAction="OnInsertEquation" />
+        </group>
+        <group id="MathTypeXHelp" label="Hỗ trợ">
+          <button id="MathTypeXLog" label="Nhật ký" imageMso="FileDocumentInspect" onAction="OnOpenLog" />
+        </group>
+      </tab>
+    </tabs>
+  </ribbon>
+</customUI>

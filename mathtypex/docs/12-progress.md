@@ -5,7 +5,12 @@
 | Slice | Nội dung | Trạng thái | Kiểm chứng |
 |---|---|---|---|
 | **VS-1** | Core headless: tokenizer → parser (có error recovery) → AST → normalizer → OMML; LaTeX chuẩn hoá; CLI `mtx`; sinh `.docx` | ✅ Xong | 282 test tự động (Linux CI), OOXML hợp lệ theo OpenXmlValidator, xem thử bằng LibreOffice |
-| VS-2 | Word add-in: `Alt+M` → editor → chèn equation gốc | ⏳ Tiếp theo | Cần anh/chị chạy trên Windows + Word |
+| **VS-2** | Word COM add-in (net48, không VSTO): hook `Alt+M` cục bộ, chụp ngữ cảnh và toạ độ con trỏ; `MathTypeX.Editor.exe` (.NET 10 WPF) nổi dưới con trỏ, kiểm tra cú pháp khi gõ; chèn bằng `InsertXML` trong một mục Undo; gói cài đặt Windows | 🟡 Code xong, **chờ kiểm tra trên Word** | Compile trên Linux; 15 test cho giao thức pipe và composer; kịch bản kiểm tra: [spikes/VS2-word-checklist.md](spikes/VS2-word-checklist.md) |
+| VS-3 | Preview MathML (WebView2) + quét font OpenType MATH | ⏳ Tiếp theo | |
+
+## Cài thử trên Windows
+
+Tải artifact **MathTypeX-win-x64** của workflow CI (hoặc chạy `tools/package.sh`), giải nén, đóng Word, chạy `install.cmd`. Chi tiết và các bước kiểm tra: [spikes/VS2-word-checklist.md](spikes/VS2-word-checklist.md).
 
 ## Build và test
 

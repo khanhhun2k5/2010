@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>MathTypeX.Editor</AssemblyName>
+    <RootNamespace>MathTypeX.Editor</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!-- Application.ThemeMode (Fluent, theo Light/Dark của hệ thống) vẫn là API thử nghiệm của WPF. -->
+    <NoWarn>$(NoWarn);WPF0001</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MathTypeX.Editing\MathTypeX.Editing.csproj" />
+  </ItemGroup>
+</Project>
