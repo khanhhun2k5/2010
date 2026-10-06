@@ -3,6 +3,7 @@
     <Project Path="src/MathTypeX.Ast/MathTypeX.Ast.csproj" />
     <Project Path="src/MathTypeX.Cli/MathTypeX.Cli.csproj" />
     <Project Path="src/MathTypeX.Core/MathTypeX.Core.csproj" />
+    <Project Path="src/MathTypeX.Documents/MathTypeX.Documents.csproj" />
     <Project Path="src/MathTypeX.Editing/MathTypeX.Editing.csproj" />
     <Project Path="src/MathTypeX.Editor/MathTypeX.Editor.csproj" />
     <Project Path="src/MathTypeX.Fonts/MathTypeX.Fonts.csproj" />
@@ -14,6 +15,7 @@
     <Project Path="src/MathTypeX.WordAddin/MathTypeX.WordAddin.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/MathTypeX.Documents.Tests/MathTypeX.Documents.Tests.csproj" />
     <Project Path="tests/MathTypeX.Editing.Tests/MathTypeX.Editing.Tests.csproj" />
     <Project Path="tests/MathTypeX.Fonts.Tests/MathTypeX.Fonts.Tests.csproj" />
     <Project Path="tests/MathTypeX.Parser.Tests/MathTypeX.Parser.Tests.csproj" />

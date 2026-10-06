@@ -18,8 +18,24 @@ public static class Normalizer
         {
             Row r => NormalizeRow(r),
             Scripts s => FoldScripts(s),
+            Accent a => NormalizeAccent(a),
             _ => mapped,
         };
+    }
+
+    // Dấu mũ có cả dạng hẹp và dạng rộng: \hat/\widehat, \tilde/\widetilde, \check/\widecheck, \vec/\overrightarrow.
+    private static readonly HashSet<string> WideCapableAccents = new() { "\u0302", "\u0303", "\u030C", "\u20D7" };
+
+    /// <summary>
+    /// Chuẩn hoá dạng hẹp/rộng theo phần chính: một ký hiệu → hẹp (\hat{x}), nhiều ký hiệu → rộng (\widehat{AB},
+    /// \overrightarrow{AB} cho vectơ AB). Word Equation vốn tự kéo dãn dấu mũ nên hai dạng cho cùng OMML.
+    /// </summary>
+    private static MathNode NormalizeAccent(Accent a)
+    {
+        if (!WideCapableAccents.Contains(a.AccentChar)) return a;
+        var inner = AstWalker.Unwrap(a.Base is Group g ? g.Content : a.Base);
+        bool single = inner is Identifier or Number { Text.Length: 1 } or Placeholder || AstWalker.IsEmpty(inner);
+        return a with { Stretchy = !single };
     }
 
     // ── Gộp chỉ số ───────────────────────────────────────────────────────

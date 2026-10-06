@@ -1,4 +1,4 @@
-# Kịch bản kiểm tra VS-2 trên Windows + Word (kiêm spike S1, S3)
+# Kịch bản kiểm tra VS-2…VS-4 trên Windows + Word (kiêm spike S1, S3)
 
 > Tôi (Claude) không chạy được Word trong môi trường build. Các bước dưới đây cần anh/chị chạy trên máy Windows có Microsoft 365. Ghi kết quả vào cột cuối, gửi lại kèm file `%LOCALAPPDATA%\MathTypeX\logs\word-addin.log` nếu có lỗi.
 
@@ -24,7 +24,20 @@
 | — | Đoạn trống → `Alt+M` → `Ctrl+Alt+M` → `E(X)=\mu.` → Enter | Display equation canh giữa, đứng riêng một đoạn | |
 | — | `Esc` | Editor đóng, không chèn gì | |
 
-Các bước 8–13 (sửa lại công thức đã chèn) thuộc VS-4.
+### Sửa lại công thức (VS-4, §54 bước 8–13)
+
+| # | Thao tác | Kỳ vọng | Kết quả |
+|---|---|---|---|
+| 8 | Đặt con trỏ vào bên trong công thức vừa chèn | | |
+| 9 | `Alt+M` | Editor mở, ô LaTeX chứa **đúng source cũ** `\int_0^1 \frac{x^2}{1+x^2}\,dx` (không phải bản chuyển ngược), font XITS Math được chọn sẵn | |
+| 10 | | Như trên | |
+| 11 | Sửa `x^2` thành `x^3` | Preview cập nhật | |
+| 12 | `Enter` | | |
+| 13 | | Công thức trong Word được **thay tại chỗ**, `Ctrl+Z` một lần trả về công thức cũ | |
+| — | Lưu tài liệu, đóng Word, mở lại, đặt con trỏ vào công thức, `Alt+M` | Source vẫn là bản đã gõ (metadata nằm trong tài liệu) | |
+| — | Copy công thức sang **tài liệu mới** trên cùng máy, `Alt+M` | Source vẫn đúng (kho cục bộ `%LOCALAPPDATA%\MathTypeX\equations.jsonl`) | |
+| — | Chèn equation bằng Word (`Alt+=`, gõ `a^2+b^2=c^2`), rồi `Alt+M` trên nó | Editor mở với LaTeX chuyển ngược `a^{2}+b^{2}=c^{2}` và dòng thông báo "chưa có source LaTeX lưu kèm" | |
+| — | Sửa trực tiếp một công thức MathTypeX bằng công cụ Equation của Word, rồi `Alt+M` | Editor hiện bản chuyển ngược của nội dung **mới** | |
 
 ## Câu hỏi của spike S1 / S3 cần quan sát thêm
 

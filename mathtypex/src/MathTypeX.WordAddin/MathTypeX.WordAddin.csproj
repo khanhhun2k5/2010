@@ -19,6 +19,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MathTypeX.Interop.Contracts\MathTypeX.Interop.Contracts.csproj" />
+    <!-- Thư viện của chính dự án, không phụ thuộc NuGet: chuyển ngược OMML, khoá chuẩn hoá, kho metadata. -->
+    <ProjectReference Include="..\MathTypeX.Documents\MathTypeX.Documents.csproj" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Ribbon.xml" LogicalName="MathTypeX.WordAddin.Ribbon.xml" />

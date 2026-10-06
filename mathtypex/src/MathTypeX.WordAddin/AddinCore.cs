@@ -42,17 +42,22 @@ namespace MathTypeX.WordAddin
             try
             {
                 var ctx = _word.Capture();
+                var existing = ctx.Existing;
                 var request = new EditRequest
                 {
                     Host = "Word",
-                    Display = false,
+                    Latex = existing?.Latex ?? "",
+                    Display = existing?.Display ?? false,
                     DisplayAllowed = ctx.DisplayAllowed,
                     FontSizePt = ctx.FontSizePt,
                     TextFont = ctx.FontName,
+                    PreferredMathFont = existing?.MathFont,
                     Caret = ctx.Caret,
                     OwnerWindow = ctx.WordWindow.ToInt64(),
                     HostProcessId = System.Diagnostics.Process.GetCurrentProcess().Id,
-                    Notice = ctx.InsideEquation ? "Sửa công thức có sẵn sẽ có ở VS-4; lần này công thức mới sẽ được chèn tại con trỏ." : null,
+                    Notice = existing is { FromRecord: false }
+                        ? "Công thức này chưa có source LaTeX lưu kèm (tạo bằng Word hoặc đã bị sửa trực tiếp) — đã chuyển ngược từ Word Equation."
+                        : null,
                 };
 
                 var client = await _editor.GetClientAsync();
@@ -60,7 +65,7 @@ namespace MathTypeX.WordAddin
                 var result = await client.InvokeAsync<EditRequest, EditResult>(RpcMethods.Edit, request);
 
                 if (result.Cancelled) return;
-                _word.Insert(ctx, result);
+                _word.Apply(ctx, result);
             }
             catch (Exception ex)
             {

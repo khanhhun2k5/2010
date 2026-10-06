@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Công thức trong tài liệu (docs/07): OMML → LaTeX, khoá chuẩn hoá, kho metadata (CustomXMLPart, kho cục bộ).
+    Không phụ thuộc NuGet — được add-in Word (net48) dùng trực tiếp.
+  -->
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net10.0</TargetFrameworks>
+    <RootNamespace>MathTypeX.Documents</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MathTypeX.Parser\MathTypeX.Parser.csproj" />
+    <ProjectReference Include="..\MathTypeX.Render.Omml\MathTypeX.Render.Omml.csproj" />
+  </ItemGroup>
+</Project>
