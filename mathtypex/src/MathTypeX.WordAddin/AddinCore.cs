@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Windows.Forms;
+using MathTypeX.Editing;
 using MathTypeX.Interop;
 
 namespace MathTypeX.WordAddin
@@ -46,7 +47,7 @@ namespace MathTypeX.WordAddin
                 var request = new EditRequest
                 {
                     Host = "Word",
-                    Latex = existing?.Latex ?? "",
+                    Latex = existing?.Latex ?? ctx.SelectedText ?? "",
                     Display = existing?.Display ?? false,
                     DisplayAllowed = ctx.DisplayAllowed,
                     FontSizePt = ctx.FontSizePt,
@@ -70,6 +71,36 @@ namespace MathTypeX.WordAddin
             catch (Exception ex)
             {
                 AddinLog.Error("OpenEditor", ex);
+                MessageBox.Show(ex.Message, "MathTypeX", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            finally
+            {
+                _busy = false;
+            }
+        }
+
+        /// <summary>Ribbon "Chuyển LaTeX": thay $…$, $$…$$, \(…\), \[…\] trong vùng chọn bằng Word Equation.</summary>
+        public void ConvertSelection()
+        {
+            if (_busy)
+            {
+                AddinLog.Info("Editor đang mở — bỏ qua Convert");
+                return;
+            }
+            _busy = true;
+            try
+            {
+                var report = _word.ConvertSelection(UserSettings.Load());
+                _word.SetStatus(report.Summary);
+                if (report.Found == 0 || report.LowConfidence.Count > 0 || report.Problems.Count > 0)
+                {
+                    MessageBox.Show(report.Details(), "MathTypeX", MessageBoxButtons.OK,
+                        report.Problems.Count > 0 ? MessageBoxIcon.Warning : MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                AddinLog.Error("ConvertSelection", ex);
                 MessageBox.Show(ex.Message, "MathTypeX", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             finally

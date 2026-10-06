@@ -1,6 +1,8 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using MathTypeX.Documents;
+using MathTypeX.Editing.Conversion;
 using MathTypeX.Interop;
 
 namespace MathTypeX.WordAddin
@@ -26,6 +28,8 @@ namespace MathTypeX.WordAddin
         public string? FontName;
         public bool DisplayAllowed;
         public ExistingEquation? Existing;
+        /// <summary>Đoạn văn bản đang chọn (không phải equation): Alt+M mở editor với đoạn này làm LaTeX, Enter thay nó.</summary>
+        public string? SelectedText;
         public IntPtr WordWindow;
     }
 
@@ -33,7 +37,7 @@ namespace MathTypeX.WordAddin
     /// Mọi lời gọi Word Object Model (late binding, không cần PIA) — chỉ được gọi trên thread UI của Word.
     /// Phần còn lại của add-in không chạm vào <c>dynamic</c>.
     /// </summary>
-    internal sealed class WordGateway
+    internal sealed partial class WordGateway
     {
         private const int WdUndefined = 9999999;
         private const int WdWord2007CompatibilityMode = 12;
@@ -64,6 +68,12 @@ namespace MathTypeX.WordAddin
             ctx.FontName = string.IsNullOrEmpty(fontName) ? null : fontName;
 
             ctx.Existing = ReadEquationAtSelection(ctx.Document, selection);
+            string rawSelection = (int)range.Start == (int)range.End ? "" : (range.Text as string) ?? "";
+            if (ctx.Existing is null && rawSelection.Length > 0 && rawSelection.Length <= 4000
+                && !rawSelection.Any(c => c < ' ' && c != '\v' && c != '\t') && (int)range.OMaths.Count == 0)
+            {
+                ctx.SelectedText = ConversionPlanner.NormalizeWordText(rawSelection).Trim();
+            }
 
             // Display equation phải đứng riêng một đoạn: chỉ cho chọn Display khi đoạn chỉ chứa công thức (hoặc trống).
             dynamic paragraph = range.Paragraphs.Item(1);
@@ -72,6 +82,10 @@ namespace MathTypeX.WordAddin
             {
                 string equationText = (existing.Range.Text as string) ?? "";
                 ctx.DisplayAllowed = existing.Display || paragraphText.Replace(equationText, "").Trim('\r', '\a', ' ', '\t').Length == 0;
+            }
+            else if (ctx.SelectedText is not null)
+            {
+                ctx.DisplayAllowed = paragraphText.Replace(rawSelection, "").Trim('\r', '\a', ' ', '\t').Length == 0;
             }
             else
             {
@@ -144,24 +158,13 @@ namespace MathTypeX.WordAddin
             dynamic doc = ctx.Document;
             dynamic range = ctx.Existing?.Range ?? ctx.Range;
             int start = range.Start;
-            int paragraphsBefore = doc.Paragraphs.Count;
 
             dynamic undo = _app.UndoRecord;
             undo.StartCustomRecord(ctx.Existing is null ? "MathTypeX: chèn công thức" : "MathTypeX: sửa công thức");
             try
             {
-                range.InsertXML(result.FlatOpc);
-
-                // ⚠ S1: InsertXML với một đoạn văn trọn vẹn có thể sinh thêm một dấu xuống đoạn — bỏ nó đi.
-                int end = FindEquationEnd(doc, start);
-                int paragraphsAfter = doc.Paragraphs.Count;
-                if (!result.Display && paragraphsAfter == paragraphsBefore + 1 && end >= 0)
-                {
-                    dynamic mark = doc.Range(end, end + 1);
-                    if ((mark.Text as string) == "\r") mark.Delete();
-                }
-                AddinLog.Info($"Đã {(ctx.Existing is null ? "chèn" : "thay")}: paragraphs {paragraphsBefore}→{(int)doc.Paragraphs.Count}, end={end}");
-
+                int end = InsertMath(range, range, result.FlatOpc, result.Display);
+                AddinLog.Info($"Đã {(ctx.Existing is null ? "chèn" : "thay")}: end={end}");
                 if (end >= 0) _app.Selection.SetRange(end, end);
             }
             finally
@@ -169,14 +172,77 @@ namespace MathTypeX.WordAddin
                 undo.EndCustomRecord();
             }
 
-            SaveMetadata(doc, start, result);
+            SaveMetadata(doc, range, start, result);
         }
 
-        private void SaveMetadata(dynamic doc, int start, EditResult result)
+        /// <summary>
+        /// Thay <paramref name="target"/> bằng OMML (gói Flat OPC) và trả về vị trí cuối của equation (-1 nếu không thấy).
+        /// ⚠ S1: InsertXML với một đoạn văn trọn vẹn có thể sinh thêm một dấu hết đoạn — bỏ nó đi.
+        /// <paramref name="anchor"/> là một Range bất kỳ trong cùng story (main, footnote, header…) để dựng Range con.
+        /// </summary>
+        private static int InsertMath(dynamic anchor, dynamic target, string flatOpc, bool display)
+        {
+            int start = target.Start;
+            dynamic? story = StoryOf(target);
+            int before = story is null ? -1 : (int)story.Paragraphs.Count;
+            target.InsertXML(flatOpc);
+
+            int end = FindEquationEnd(anchor, start);
+            int after = story is null ? -1 : (int)story.Paragraphs.Count;
+            if (end < 0 || before < 0 || after != before + 1) return end;
+
+            if (TextAt(anchor, end, end + 1) == "\r" && (!display || TextAt(anchor, end + 1, end + 2) == "\r"))
+            {
+                // Inline: dấu hết đoạn thừa ngay sau equation. Display: đoạn trống thừa ngay sau đoạn của equation.
+                RangeAt(anchor, end, end + 1).Delete();
+                AddinLog.Info("InsertXML sinh thêm một đoạn sau equation — đã bỏ");
+            }
+            else if (display && start >= 1 && TextAt(anchor, start - 1, start) == "\r" && (start == 1 || TextAt(anchor, start - 2, start - 1) == "\r"))
+            {
+                RangeAt(anchor, start - 1, start).Delete();
+                AddinLog.Info("InsertXML sinh thêm một đoạn trống trước equation — đã bỏ");
+                end--;
+            }
+            else
+            {
+                AddinLog.Info($"InsertXML sinh thêm một đoạn nhưng không xác định được vị trí (start={start}, end={end})");
+            }
+            return end;
+        }
+
+        private static dynamic? StoryOf(dynamic range)
         {
             try
             {
-                dynamic? om = FindEquation(doc, start);
+                return range.Document.StoryRanges.Item((int)range.StoryType);
+            }
+            catch (Exception ex)
+            {
+                AddinLog.Error("StoryOf", ex);
+                return null;
+            }
+        }
+
+        /// <summary>Range con [start, end) trong cùng story với <paramref name="anchor"/> (Document.Range chỉ dùng được cho main story).</summary>
+        private static dynamic RangeAt(dynamic anchor, int start, int end)
+        {
+            dynamic r = anchor.Duplicate;
+            r.SetRange(start, end);
+            return r;
+        }
+
+        private static string TextAt(dynamic anchor, int start, int end)
+        {
+            if (start < 0 || end <= start) return "";
+            dynamic r = RangeAt(anchor, start, end);
+            return (int)r.Start == start && (int)r.End == end ? (r.Text as string) ?? "" : "";
+        }
+
+        private void SaveMetadata(dynamic doc, dynamic anchor, int start, EditResult result)
+        {
+            try
+            {
+                dynamic? om = FindEquation(anchor, start);
                 if (om is null) return;
                 var element = OmmlExtractor.FirstEquation((string)om.Range.WordOpenXML);
                 if (element is null) return;
@@ -208,18 +274,17 @@ namespace MathTypeX.WordAddin
             doc.CustomXMLParts.Add(store.ToXml());
         }
 
-        private static dynamic? FindEquation(dynamic doc, int start)
+        private static dynamic? FindEquation(dynamic anchor, int start)
         {
-            int docEnd = doc.Content.End;
-            dynamic probe = doc.Range(start, Math.Min(start + 1, docEnd));
+            dynamic probe = RangeAt(anchor, start, start + 1);
             return (int)probe.OMaths.Count > 0 ? probe.OMaths.Item(1) : null;
         }
 
-        private static int FindEquationEnd(dynamic doc, int start)
+        private static int FindEquationEnd(dynamic anchor, int start)
         {
             try
             {
-                dynamic? om = FindEquation(doc, start);
+                dynamic? om = FindEquation(anchor, start);
                 if (om is not null) return om.Range.End;
             }
             catch (Exception ex)

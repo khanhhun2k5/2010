@@ -33,7 +33,7 @@ internal sealed class EditorWindow : Window
         "Libertinus Math", "Fira Math", "Asana Math", "STIX Math",
     };
 
-    private readonly EditorSettings _settings;
+    private readonly UserSettings _settings;
     private readonly TextBox _source;
     private readonly ComboBox _font;
     private readonly ToggleButton _displayToggle;
@@ -58,7 +58,7 @@ internal sealed class EditorWindow : Window
     private EditRequest _request = new();
     private Action? _standaloneExit;
 
-    public EditorWindow(EditorSettings settings)
+    public EditorWindow(UserSettings settings)
     {
         _settings = settings;
         _usage = UsageStats.Load(UsagePath);
@@ -208,7 +208,12 @@ internal sealed class EditorWindow : Window
 
     private void Submit(bool allowEmptySlots = false)
     {
-        var outcome = EquationComposer.Compose(_source.Text, CurrentOptions(), UiLanguage.Vi, allowEmptySlots);
+        // Delimiter người dùng gõ/dán kèm ($$…$$) quyết định display, nhưng chỉ khi vị trí chèn cho phép display
+        // (Word yêu cầu display đứng riêng một đoạn) — nếu không thì chèn inline.
+        var (latex, delimiterDisplay) = EquationComposer.StripDelimiters(_source.Text);
+        var options = CurrentOptions();
+        options = options with { Display = (delimiterDisplay ?? options.Display) && _request.DisplayAllowed };
+        var outcome = EquationComposer.Compose(latex, options, UiLanguage.Vi, allowEmptySlots, stripDelimiters: false);
         if (outcome.Result is null)
         {
             ShowStatus(outcome.BlockingMessage ?? "", isError: true);
@@ -412,7 +417,7 @@ internal sealed class EditorWindow : Window
                 return true;
             case Key.Enter:
                 if (_completion.Selected is not { } entry) return false;
-                // Đã gõ đủ "lpha" thì Enter chèn công thức luôn, không bắt nhấn Enter hai lần.
+                // Đã gõ đủ "\alpha" thì Enter chèn công thức luôn, không bắt nhấn Enter hai lần.
                 if (IsAlreadyComplete(entry))
                 {
                     _completion.Close();

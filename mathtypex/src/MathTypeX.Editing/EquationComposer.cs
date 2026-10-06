@@ -51,9 +51,13 @@ public static class EquationComposer
         _ => false,
     });
 
-    public static ComposeOutcome Compose(string input, ComposeOptions options, UiLanguage language = UiLanguage.Vi, bool allowEmptySlots = false)
+    /// <param name="stripDelimiters">
+    /// Bỏ $…$/$$…$$… mà người dùng dán kèm và lấy chế độ display theo delimiter. Tắt khi LaTeX đã được tách sẵn
+    /// (Convert Selection) để <see cref="ComposeOptions.Display"/> luôn được tôn trọng.
+    /// </param>
+    public static ComposeOutcome Compose(string input, ComposeOptions options, UiLanguage language = UiLanguage.Vi, bool allowEmptySlots = false, bool stripDelimiters = true)
     {
-        var (latex, delimiterDisplay) = StripDelimiters(input);
+        var (latex, delimiterDisplay) = stripDelimiters ? StripDelimiters(input) : (input.Trim(), (bool?)null);
         bool display = delimiterDisplay ?? options.Display;
         var doc = LatexParser.Parse(latex, new ParserOptions { DecimalComma = options.DecimalComma });
 

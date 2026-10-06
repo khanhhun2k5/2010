@@ -12,6 +12,7 @@
     <Project Path="src/MathTypeX.Parser/MathTypeX.Parser.csproj" />
     <Project Path="src/MathTypeX.Render.MathMl/MathTypeX.Render.MathMl.csproj" />
     <Project Path="src/MathTypeX.Render.Omml/MathTypeX.Render.Omml.csproj" />
+    <Project Path="src/MathTypeX.Scanner/MathTypeX.Scanner.csproj" />
     <Project Path="src/MathTypeX.WordAddin/MathTypeX.WordAddin.csproj" />
   </Folder>
   <Folder Name="/tests/">
@@ -21,5 +22,6 @@
     <Project Path="tests/MathTypeX.Parser.Tests/MathTypeX.Parser.Tests.csproj" />
     <Project Path="tests/MathTypeX.Render.MathMl.Tests/MathTypeX.Render.MathMl.Tests.csproj" />
     <Project Path="tests/MathTypeX.Render.Omml.Tests/MathTypeX.Render.Omml.Tests.csproj" />
+    <Project Path="tests/MathTypeX.Scanner.Tests/MathTypeX.Scanner.Tests.csproj" />
   </Folder>
 </Solution>

@@ -9,7 +9,8 @@
 | **VS-3** | Preview MathML Core trong WebView2 (vẽ cả khi đang lỗi: □ cho ô thiếu, lệnh sai tô đỏ); bộ đọc OpenType tự viết (TTC, `name`, `cmap` 4/12, `MATH`: hằng số và biến thể ∫); quét font có cache; font selector lấy từ font đã cài, tooltip mô tả ∫; `mtx fonts`, `mtx mathml`, `mtx preview` (trang so sánh font) | ✅ Phần lõi đã kiểm chứng trên Chromium headless; 🟡 WebView2 trong editor chờ kiểm tra trên Windows | 43 test MathML (gồm bất biến D9), 17 test font (font tổng hợp + Latin Modern/TeX Gyre/STIX thật); ảnh chụp Chromium |
 | **VS-4** | Sửa lại công thức: OMML → LaTeX (mọi Word Equation, kể cả do Word tạo; bỏ qua phần bị xoá khi Track Changes), khoá chuẩn hoá `k1:` (SHA-256 của LaTeX chuẩn hoá, không phụ thuộc cách Word ghi lại XML), kho CustomXMLPart trong tài liệu + kho cục bộ; add-in đọc equation tại con trỏ, mở editor với source cũ, thay tại chỗ trong một mục Undo, khoá tính từ OMML Word thực sự lưu | ✅ Lõi · 🟡 Word chờ kiểm tra | 90 test: round-trip "dựng lại ra đúng OMML" trên corpus × 4 bộ tuỳ chọn, khoá bền trước các biến đổi kiểu Word, chuyển ngược công thức kiểu Word gallery, kho hỏng coi như rỗng |
 | **VS-6/7** | Catalog lệnh/mẫu (24 nhóm, tên Việt–Anh, từ khoá, cú pháp cho người mới); gợi ý khi gõ `\fra` (tìm mờ, gập dấu tiếng Việt, ưu tiên lệnh hay dùng — thống kê chỉ lưu Id, cục bộ); snippet `$1`/`${1:gợi ý}`/`$0` với Tab/Shift+Tab, snippet lồng nhau; Tab nhảy tới ô `{}` rỗng; ô rỗng hiện □ trong preview và chặn chèn (Ctrl+Shift+Enter để vẫn chèn); Command Palette Ctrl+Shift+P; dòng trợ giúp Beginner mode (F1) | ✅ Lõi · 🟡 UI chờ kiểm tra trên Windows | 69 test Editing (tìm kiếm, snippet, thứ tự Tab §10, phát hiện tiền tố, trợ giúp ngữ cảnh, ô trống); kịch bản A1–A12 trong checklist |
-| VS-8 | Chuyển LaTeX trong vùng chọn (`$…$`, `\(…\)`, `$$…$$`, `\[…\]`) | ⏳ Tiếp theo | |
+| **VS-8** | Chuyển LaTeX trong vùng chọn: thư viện `MathTypeX.Scanner` (máy trạng thái, quy tắc `$` kiểu Pandoc, `\$`, field/ô bảng/ảnh của Word là ranh giới, chấm điểm độ tin cậy kèm lý do); planner tách đoạn cho display, đưa dấu câu đứng sau `$$…$$` vào công thức, bỏ `\label`/`\tag`, sửa ký tự AutoCorrect của Word (’ – NBSP); add-in: nút **Chuyển LaTeX** (không chọn gì thì lấy đoạn chứa con trỏ), một mục Undo, bỏ qua vùng code / chữ ẩn / style "MTX Ignore" / equation có sẵn, kiểm tra lại văn bản trước khi thay, lưu metadata kèm văn bản gốc (cho Revert ở VS-9); `Alt+M` trên đoạn chữ đang chọn mở editor với đoạn đó; thiết lập dùng chung editor ↔ add-in; `mtx scan`, `mtx convert` | ✅ Lõi · 🟡 Word chờ kiểm tra | 253 test Scanner (gồm 136 tổ hợp công thức × delimiter × 9 ngữ cảnh, fuzz 3.000 chuỗi, 10.000 công thức < 5 s), 38 test planner/thiết lập; `mtx convert tests/corpus/convert-sample.txt` → .docx hợp lệ; kịch bản C1–C10 |
+| VS-9 | Chuyển cả tài liệu (mọi story, hộp Scan, ignore list, Revert) | ⏳ Tiếp theo | |
 
 ## Cài thử trên Windows
 
@@ -36,6 +37,8 @@ dotnet run --project src/MathTypeX.Cli -- parse "\frac{a}{b"      # → "Bạn �
 dotnet run --project src/MathTypeX.Cli -- latex "\leq \rightarrow \frac12"
 dotnet run --project src/MathTypeX.Cli -- docx tests/corpus/integrals.tex --out out/integrals-demo.docx
 dotnet run --project src/MathTypeX.Cli -- fonts                    # font OpenType MATH đã cài + đặc điểm ∫
+dotnet run --project src/MathTypeX.Cli -- scan 'Giá $20 và $30, còn $x^2$ thì là toán'   # ứng viên + độ tin cậy
+dotnet run --project src/MathTypeX.Cli -- convert tests/corpus/convert-sample.txt --out out/convert-demo.docx
 dotnet run --project src/MathTypeX.Cli -- preview tests/corpus/integrals.tex --display --out out/integrals.html \
     --fonts "Cambria Math,XITS Math,Latin Modern Math,STIX Two Math"  # mở bằng Edge/Chrome: so sánh font
 ```

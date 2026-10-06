@@ -21,6 +21,8 @@
     <ProjectReference Include="..\MathTypeX.Interop.Contracts\MathTypeX.Interop.Contracts.csproj" />
     <!-- Thư viện của chính dự án, không phụ thuộc NuGet: chuyển ngược OMML, khoá chuẩn hoá, kho metadata. -->
     <ProjectReference Include="..\MathTypeX.Documents\MathTypeX.Documents.csproj" />
+    <!-- Scanner, planner và composer cho Convert LaTeX (chạy trong Word: chỉ là code quản lý thuần, không UI). -->
+    <ProjectReference Include="..\MathTypeX.Editing\MathTypeX.Editing.csproj" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Ribbon.xml" LogicalName="MathTypeX.WordAddin.Ribbon.xml" />

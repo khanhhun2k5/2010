@@ -1,4 +1,4 @@
-# Kịch bản kiểm tra VS-2…VS-7 trên Windows + Word (kiêm spike S1, S3)
+# Kịch bản kiểm tra VS-2…VS-8 trên Windows + Word (kiêm spike S1, S3)
 
 > Tôi (Claude) không chạy được Word trong môi trường build. Các bước dưới đây cần anh/chị chạy trên máy Windows có Microsoft 365. Ghi kết quả vào cột cuối, gửi lại kèm file `%LOCALAPPDATA%\MathTypeX\logs\word-addin.log` nếu có lỗi.
 
@@ -56,11 +56,34 @@
 | A11 | `F1` | Bật/tắt dòng trợ giúp người mới; lần mở sau vẫn giữ lựa chọn | |
 | A12 | `Ctrl+Z` sau khi chấp nhận gợi ý | Trả về `\fra` (Undo của ô soạn còn nguyên) | |
 
+### Chuyển LaTeX trong vùng chọn (VS-8, §54 phần 2)
+
+Dán đoạn sau vào Word (mỗi dòng một đoạn), hoặc mở `tests/corpus/convert-sample.txt` rồi chép vào:
+
+```
+Với $X\sim N(\mu,\sigma^2)$, ta có $$E(X)=\mu.$$ Do đó kỳ vọng bằng μ.
+Giá vé $20 và $30, biến $HOME$, còn \(\alpha+\beta\) là toán.
+```
+
+| # | Thao tác | Kỳ vọng | Kết quả |
+|---|---|---|---|
+| C1 | Chọn cả hai đoạn, tab **MathTypeX → Chuyển LaTeX** (hoặc `Alt`, `Y`/`MX`, `C`) | Thanh trạng thái: "đã chuyển 3/4 công thức"; hộp thông báo liệt kê `$HOME$` — giống tên biến môi trường | |
+| C2 | | Đoạn 1 tách thành: "Với [inline], ta có" / [display `E(X)=μ.`] / "Do đó kỳ vọng bằng μ." | |
+| C3 | | `$20 và $30` giữ nguyên là chữ; `\(\alpha+\beta\)` thành equation inline | |
+| C4 | `Ctrl+Z` **một lần** | Toàn bộ văn bản trở lại như trước khi chuyển (kể cả các đoạn đã tách) | |
+| C5 | Không chọn gì, đặt con trỏ trong đoạn 2, Chuyển LaTeX | Chỉ đoạn 2 được chuyển | |
+| C6 | Đặt `$x^2$` trong một đoạn font Consolas, Chuyển LaTeX | Không chuyển, lý do "dùng font code" | |
+| C7 | Chuyển trong ô bảng, footnote, header | Hoạt động như ở thân bài (ghi lại nếu lỗi) | |
+| C8 | Sau khi chuyển, đặt con trỏ vào `E(X)=μ.` → `Alt+M` | Editor mở với `E(X)=\mu.` (metadata đã lưu) | |
+| C9 | Bôi đen chữ `\frac{a}{b}` (văn bản thường) → `Alt+M` | Editor mở sẵn `\frac{a}{b}`; `Enter` thay đoạn chữ bằng equation | |
+| C10 | Bật Track Changes rồi Chuyển LaTeX | Phần thay hiện thành revision; `Ctrl+Z` vẫn một lần | |
+
 ## Câu hỏi của spike S1 / S3 cần quan sát thêm
 
 | Câu hỏi | Cách xem | Kết quả |
 |---|---|---|
-| S1: `InsertXML` có sinh thêm một đoạn trống không? | Xem nhật ký: dòng `Đã chèn: paragraphs A→B` (B nên bằng A) | |
+| S1: `InsertXML` có sinh thêm một đoạn trống không? | Xem nhật ký: dòng "InsertXML sinh thêm một đoạn…" (không có dòng này là tốt nhất) | |
+| S1: `Range.InsertParagraphAfter` trên Range rỗng có chèn dấu hết đoạn đúng tại vị trí đó không? | C2: chữ trước/sau display nằm đúng đoạn | |
 | S1: Chèn trong ô bảng, footnote, header có được không? | Thử `Alt+M` ở các vị trí đó | |
 | S1: Bật Track Changes rồi chèn | Phần chèn hiện thành revision | |
 | S3: Editor có hiện đúng cạnh con trỏ trên màn hình thứ hai / màn hình DPI 150% không? | Kéo Word sang màn hình khác | |

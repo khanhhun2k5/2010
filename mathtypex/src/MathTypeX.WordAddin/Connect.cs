@@ -99,6 +99,18 @@ namespace MathTypeX.WordAddin
             }
         }
 
+        public void OnConvertSelection(object control)
+        {
+            try
+            {
+                _core?.ConvertSelection();
+            }
+            catch (Exception ex)
+            {
+                AddinLog.Error("OnConvertSelection", ex);
+            }
+        }
+
         public void OnOpenLog(object control)
         {
             try

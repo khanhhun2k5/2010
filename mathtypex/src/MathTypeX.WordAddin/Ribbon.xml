@@ -2,14 +2,17 @@
 <customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui">
   <ribbon>
     <tabs>
-      <tab id="MathTypeXTab" label="MathTypeX">
+      <tab id="MathTypeXTab" label="MathTypeX" keytip="MX">
         <group id="MathTypeXEquation" label="Công thức">
           <button id="MathTypeXInsert" label="Chèn công thức" screentip="Chèn / sửa công thức LaTeX (Alt+M)"
                   supertip="Mở editor tại con trỏ. Gõ LaTeX, nhấn Enter để chèn Word Equation gốc."
-                  imageMso="EquationInsertGallery" size="large" onAction="OnInsertEquation" />
+                  imageMso="EquationInsertGallery" size="large" onAction="OnInsertEquation" keytip="M" />
+          <button id="MathTypeXConvert" label="Chuyển LaTeX" screentip="Chuyển LaTeX trong vùng chọn thành Word Equation"
+                  supertip="Tìm $…$, $$…$$, \(…\), \[…\], equation*, align* trong vùng chọn (không chọn gì: đoạn chứa con trỏ) và thay bằng Word Equation gốc. Một lần Ctrl+Z hoàn tác tất cả."
+                  imageMso="EquationProfessionalFormat" size="large" onAction="OnConvertSelection" keytip="C" />
         </group>
         <group id="MathTypeXHelp" label="Hỗ trợ">
-          <button id="MathTypeXLog" label="Nhật ký" imageMso="FileDocumentInspect" onAction="OnOpenLog" />
+          <button id="MathTypeXLog" label="Nhật ký" imageMso="FileDocumentInspect" onAction="OnOpenLog" keytip="L" />
         </group>
       </tab>
     </tabs>

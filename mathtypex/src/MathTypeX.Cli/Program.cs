@@ -26,6 +26,9 @@ internal static class Cli
           mtx docx     <corpus.tex> --out <file.docx> [tuỳ chọn]
                                             Sinh tài liệu Word thử font × chế độ × cỡ ∫ (spike S2)
           mtx validate <file.docx>          Kiểm tra tài liệu theo schema Office
+          mtx scan     "<văn bản>"          Tìm $…$, $$…$$, \(…\), \[…\] trong văn bản, kèm độ tin cậy
+          mtx convert  <file.txt> --out <file.docx>
+                                            Chuyển LaTeX trong văn bản thành Word Equation (như lệnh Chuyển LaTeX trong Word)
           mtx fonts                         Liệt kê font OpenType MATH đã cài (và đặc điểm dấu ∫)
 
         Tuỳ chọn:
@@ -103,6 +106,10 @@ internal static class Cli
                 }
                 case "docx":
                     return DemoDocument.Build(opts);
+                case "scan":
+                    return ConvertDemo.Scan(opts.Positional ?? throw new ArgumentException("Thiếu văn bản"));
+                case "convert":
+                    return ConvertDemo.Convert(opts);
                 case "fonts":
                 {
                     var fonts = new FontScanner(FontCache.Load()).ScanMathFonts();

@@ -21,6 +21,11 @@ public sealed class EquationRecord
     [DataMember] public string CreatedUtc { get; set; } = "";
     [DataMember] public string UpdatedUtc { get; set; } = "";
     [DataMember] public string AppVersion { get; set; } = "";
+    /// <summary>
+    /// Văn bản gốc kèm delimiter khi công thức được tạo bằng Convert LaTeX (ví dụ "$$E=mc^2$$."), để lệnh
+    /// "Revert to LaTeX text" trả lại đúng như cũ. Rỗng với công thức chèn bằng editor.
+    /// </summary>
+    [DataMember(EmitDefaultValue = false)] public string? SourceText { get; set; }
 
     public static EquationRecord Create(string key, string originalLatex, string normalizedLatex, bool display, string mathFont)
     {

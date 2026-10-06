@@ -1,5 +1,6 @@
 using System.IO;
 using System.Windows;
+using MathTypeX.Editing;
 using MathTypeX.Fonts;
 
 namespace MathTypeX.Editor;
@@ -20,7 +21,7 @@ internal static class Program
         var app = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
         app.ThemeMode = ThemeMode.System;
 
-        var settings = EditorSettings.Load();
+        var settings = UserSettings.Load();
         var window = new EditorWindow(settings);
         new EditorHost(app.Dispatcher, window).Start();
 

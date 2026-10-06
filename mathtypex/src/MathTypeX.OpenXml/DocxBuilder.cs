@@ -46,6 +46,19 @@ public sealed class DocxBuilder
         return this;
     }
 
+    /// <summary>Đoạn văn trộn chữ (string) và equation inline (phần tử m:oMath) theo thứ tự — kết quả của Convert LaTeX.</summary>
+    public DocxBuilder Mixed(IEnumerable<object> parts)
+    {
+        var p = new Paragraph();
+        foreach (var part in parts)
+        {
+            if (part is XElement oMath) p.Append(new M.OfficeMath(Outer(oMath)));
+            else if (part is string text && text.Length > 0) p.Append(new Run(new Text(text) { Space = SpaceProcessingModeValues.Preserve }));
+        }
+        _blocks.Add(p);
+        return this;
+    }
+
     /// <summary>Đoạn văn chỉ chứa một display equation (Word yêu cầu display equation đứng riêng một đoạn).</summary>
     public DocxBuilder DisplayMath(XElement oMathPara)
     {

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Phát hiện LaTeX trong văn bản thường (docs/05 §9.4): $…$, $$…$$, \(…\), \[…\], môi trường toán.
+    Máy trạng thái, không dùng regex; không phụ thuộc NuGet — add-in Word (net48) dùng trực tiếp.
+  -->
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net10.0</TargetFrameworks>
+    <RootNamespace>MathTypeX.Scanning</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MathTypeX.Parser\MathTypeX.Parser.csproj" />
+  </ItemGroup>
+</Project>
