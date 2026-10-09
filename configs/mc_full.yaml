@@ -1,0 +1,31 @@
+# Lưới đầy đủ của Bước 1.3 (spec mục 4): 5 nhiễu × 5 NSR × 3 nhiễu loạn × 4 k × 2 α, 200 seed.
+name: mc_full
+base_seed: 20261009
+n_seeds: 200
+workers: 4
+output: results/mc.parquet
+truth_samples: 1000000
+
+dgp: {n_units: 30, n_weeks: 260, p: 20, rank: 4}
+confounding_levels: {yeu: 0.3, vua: 0.6, manh: 1.0}
+
+grid:
+  noise: [gaussian, poisson, laplace, biased, clipped]
+  nsr: [0.0, 0.25, 0.5, 1.0, 2.0]
+  confounding: [yeu, vua, manh]
+  k: [2, 4, 6, 8]
+  alpha: [0.90, 0.95]
+
+estimators: [v3_lowrank, raw, unadjusted, oracle, oracle_propensity, lasso_dml]
+estimands: [d_es, d_es_normal, d_es_stress, h3_delta, ate]
+
+# Mặc định theo pilot, trừ purge_weeks = 12 theo spec (pilot: 2).
+estimator_settings:
+  n_folds: 4
+  purge_weeks: 12
+  propensity_clip: 0.03
+  propensity_C: 0.5
+  ridge_alpha: 3.0
+  grid_levels: [0.45, 0.999, 45]
+
+inference: {block_weeks: 12, n_boot: 199, min_coverage: 0.90}
